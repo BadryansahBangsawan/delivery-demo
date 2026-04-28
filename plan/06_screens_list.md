@@ -1,11 +1,11 @@
-# Pick Up - Screen List & Priority
+# DELIVRY - Screen List & Priority
 
 ## Phase 1 (MVP) - Core Screens
 
 ### Auth (4 screens)
 | # | Screen               | Priority | Description                        |
 |---|----------------------|----------|------------------------------------|
-| 1 | Splash               | P0       | Logo, loading, cek auth            |
+| 1 | Splash               | P0       | Logo DELIVRY, loading, cek auth    |
 | 2 | Onboarding           | P1       | 3 slides intro                     |
 | 3 | Login                | P0       | Input nomor HP, social login       |
 | 4 | OTP Verification     | P0       | Input 6 digit OTP                  |
@@ -15,7 +15,7 @@
 |---|----------------------|----------|------------------------------------|
 | 5 | Home                 | P0       | Service grid, promo, search, recent|
 
-### PickRide (5 screens)
+### Ride (5 screens)
 | # | Screen               | Priority | Description                        |
 |---|----------------------|----------|------------------------------------|
 | 6 | Pick Location        | P0       | Input pickup & destination         |
@@ -24,7 +24,7 @@
 | 9 | Live Tracking        | P0       | Map tracking + driver info         |
 |10 | Ride Complete        | P0       | Rating, tip, receipt               |
 
-### PickFood (5 screens)
+### Food (5 screens)
 | # | Screen               | Priority | Description                        |
 |---|----------------------|----------|------------------------------------|
 |11 | Food Home            | P0       | Restoran list, kategori, search    |
@@ -33,7 +33,7 @@
 |14 | Food Order Confirm   | P0       | Alamat, payment, confirm           |
 |15 | Food Tracking        | P0       | Status + map + driver              |
 
-### PickSend (3 screens)
+### Delivery / Send (3 screens)
 | # | Screen               | Priority | Description                        |
 |---|----------------------|----------|------------------------------------|
 |16 | Send Package         | P1       | Pickup & delivery location         |
@@ -85,8 +85,8 @@
 - **P2**: Nice to have, bisa di-phase 2
 
 ## Phase 2 (Post-MVP)
-- PickMart screens
-- PickService screens
+- Mart screens
+- Service screens (jasa)
 - Dark mode
 - Multi-language
 - Driver/Merchant app
@@ -97,38 +97,38 @@
 ## Development Order (Recommended)
 
 ### Sprint 1: Foundation
-- Project setup, theme, routing, core widgets
+- Project setup React Native, theme, navigation, core components
 - Splash, Onboarding, Login, OTP
 - Home screen (static)
 
-### Sprint 2: PickRide
+### Sprint 2: Ride
 - Location search & picker
-- Map integration
+- Map integration (react-native-maps)
 - Ride booking flow (mock data)
 - Tracking screen
 - Rating screen
 
-### Sprint 3: PickFood
+### Sprint 3: Food
 - Restaurant list & detail
-- Cart system
+- Cart system (Zustand store)
 - Order flow
 - Food tracking
 
 ### Sprint 4: Payment & Activity
-- Wallet screen
+- Wallet screen (DELIVRY Pay)
 - Payment integration
 - Order history
 - Notification center
 
 ### Sprint 5: Chat & Profile
-- In-app chat
+- In-app chat (WebSocket)
 - Profile management
 - Settings
 - Saved addresses
 
 ### Sprint 6: Polish & Launch
-- PickSend flow
-- Animation & transitions
+- Delivery/Send flow
+- Animation & transitions (Reanimated)
 - Error handling & empty states
 - Performance optimization
-- Testing
+- Testing (Jest + React Native Testing Library)

@@ -1,4 +1,4 @@
-# Pick Up - User Flow & Navigation
+# DELIVRY - User Flow & Navigation
 
 ## App Entry Flow
 
@@ -6,7 +6,7 @@
 App Launch
   |
   v
-Splash Screen (1.5s, logo + tagline)
+Splash Screen (1.5s, logo DELIVRY + tagline)
   |
   v
 [Cek Auth State]
@@ -19,9 +19,9 @@ Splash Screen (1.5s, logo + tagline)
 ## Onboarding Flow
 
 ```
-Slide 1: "Pesan Ride Kapanpun"    (ilustrasi motor/car)
-Slide 2: "Kirim Barang Mudah"     (ilustrasi paket)
-Slide 3: "Pesan Makanan Favorit"  (ilustrasi makanan)
+Slide 1: "Move Anything Anytime"      (ilustrasi motor/delivery)
+Slide 2: "Kirim Barang Tanpa Ribet"   (ilustrasi paket)
+Slide 3: "Pesan Makanan Favorit"      (ilustrasi makanan)
   |
   v
 [Mulai] Button --> Login Screen
@@ -44,49 +44,51 @@ Login Screen
 ## Main Navigation (Bottom Tab)
 
 ```
-[Home]  [Activity]  [Payment]  [Chat]  [Account]
-  |        |           |         |        |
-  v        v           v         v        v
-Home    Order       PickPay   Chat     Profile
-Screen  History     Wallet    List     Settings
+[Beranda]  [Pesanan]  [Dompet]  [Chat]  [Akun]
+    |          |          |        |       |
+    v          v          v        v       v
+  Home      Order     DELIVRY    Chat   Profile
+  Screen    History    Pay       List   Settings
 ```
 
 ## Home Screen Layout
 
 ```
 +----------------------------------+
-| [=] Pick Up            [Bell] [Q]|  <- Hamburger, Notif, QR scan
+| DELIVRY                [Bell] [Q]|  <- Logo, Notif, QR scan
 +----------------------------------+
-| [Search: Mau kemana?           ] |  <- Search bar
+| Hai, Andi 👋                     |
+| Mau ke mana hari ini?            |
 +----------------------------------+
-|                                  |
-| [PickRide] [PickSend] [PickFood]|  <- Service grid
-| [PickMart] [PickPay]  [More..] |
-|                                  |
+| [Search: Cari tujuan...        ] |  <- Search bar
 +----------------------------------+
+| [   DELIVRY Promo Banner      ] |  <- Banner brand
++----------------------------------+
+| Layanan kami          Lihat semua|
+| [Ride] [Car] [Delivery] [Food] |  <- Service grid
+| [Send] [Package] [Mart] [More] |
++----------------------------------+
+| Promo untukmu         Lihat semua|
 | [ ====  Promo Banner  ==== ]    |  <- Carousel
 | [  o     o     .     o    ]     |
 +----------------------------------+
-|                                  |
 | Terakhir Dipesan                 |
-| [Kantor - Jl. Sudirman]   [>]   |
-| [Rumah - Jl. Merdeka]     [>]   |
-|                                  |
-+----------------------------------+
-| Restoran Terdekat                |
-| [Card] [Card] [Card] -->        |  <- Horizontal scroll
+| [Kantor - Jl. Sudirman]    [>] |
+| [Rumah - Jl. Merdeka]      [>] |
 +----------------------------------+
 ```
 
-## PickRide Flow
+## Ride Flow
 
 ```
-Home -> Tap Search / PickRide
+Home -> Tap Search / Ride
   |
   v
 +----------------------------------+
-| Lokasi Jemput: [GPS auto]       |
-| Tujuan: [Input alamat]          |
+| Lokasi penjemputan               |
+| [Jl. Sudirman No. 10      ]     |
+| Tujuan                           |
+| [Mall Kota Kasablanka      ]    |
 +----------------------------------+
 | Suggestions / Recent / Saved     |
 +----------------------------------+
@@ -98,11 +100,15 @@ Home -> Tap Search / PickRide
 |  A -------- route -------- B    |
 |                                  |
 +----------------------------------+
-| PickRide Motor    Rp 15.000  [v]|
-| PickRide Car      Rp 35.000     |
-| PickRide Premium  Rp 55.000     |
+| Layanan                          |
+| Ride                        >   |
+|   Ride   1-4 menit              |
 +----------------------------------+
-| [Cash v]     [Pesan PickRide]   |
+| Metode pembayaran                |
+| DELIVRY Pay                      |
+| Saldo: Rp120.000           >    |
++----------------------------------+
+| [     Pesan sekarang       ]    |  <- Purple CTA
 +----------------------------------+
   |
   v (tap Pesan)
@@ -141,10 +147,10 @@ Home -> Tap Search / PickRide
 +----------------------------------+
 ```
 
-## PickFood Flow
+## Food Flow
 
 ```
-Home -> Tap PickFood
+Home -> Tap Food
   |
   v
 +----------------------------------+
@@ -204,20 +210,20 @@ Home -> Tap PickFood
 +----------------------------------+
 ```
 
-## Payment (PickPay) Flow
+## Payment (DELIVRY Pay) Flow
 
 ```
-Tab Payment
+Tab Dompet
   |
   v
 +----------------------------------+
-| PickPay                          |
+| DELIVRY Pay                      |
 | Saldo: Rp 150.000               |
 | [Top Up]  [Transfer]  [QR Pay] |
 +----------------------------------+
 | Riwayat Transaksi                |
-| [PickRide - Rp 15.000]   Hari ini|
-| [PickFood - Rp 51.000]   Kemarin|
+| [Ride - Rp 15.000]      Hari ini|
+| [Food - Rp 51.000]      Kemarin|
 | [Top Up + Rp 100.000]   20 Apr |
 +----------------------------------+
 ```

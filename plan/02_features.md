@@ -1,31 +1,38 @@
-# Pick Up - Features & Services
+# DELIVRY - Features & Services
 
 ## Core Services
 
-### 1. PickRide (Transportasi)
-- **Motor** - Ojek online
-- **Car** - Taksi online (standar & premium)
+### 1. Ride (Transportasi)
+- **Motor** - Ojek online (fast, low cost)
+- **Car** - Taksi online (comfort)
 - Fitur: estimasi harga, pilih metode pembayaran, share trip, SOS button
 
-### 2. PickSend (Pengiriman Barang)
-- Kirim barang antar lokasi dalam kota
+### 2. Delivery (Pengiriman Barang)
+- Instant courier — kirim barang antar lokasi dalam kota
+- Same-day delivery
 - Pilih ukuran paket (kecil/sedang/besar)
 - Foto barang sebelum dikirim
 - Real-time tracking
 
-### 3. PickFood (Pesan Makanan)
+### 3. Food (Pesan Makanan)
 - Browse restoran terdekat
 - Menu & harga
 - Promo/diskon
 - Real-time tracking pesanan
 - Rating & review restoran
 
-### 4. PickMart (Belanja Kebutuhan)
+### 4. Send / Package (Kirim Barang)
+- Kirim barang kecil-besar
+- Detail paket (ukuran, berat, foto)
+- Tracking real-time
+
+### 5. Mart (Belanja Kebutuhan) - Future Expansion
 - Groceries, minimarket, apotek
+- Grocery / retail delivery
 - Kategori produk
 - Search & filter
 
-### 5. PickService (Jasa) - Phase 2
+### 6. Service (Jasa) - Phase 2
 - Cleaning, tukang, laundry
 - Booking jadwal
 - Rating & review
@@ -40,13 +47,13 @@
 - Profile setup (nama, foto, email)
 
 ### Home
-- Search bar (kemana tujuan?)
-- Service grid (PickRide, PickSend, PickFood, PickMart)
+- Search bar ("Mau ke mana?")
+- Service grid (Ride, Car, Delivery, Food, Send, Package, Mart, More)
 - Banner promo (carousel)
 - Terakhir dipesan / favorit
 - Rekomendasi restoran terdekat
 
-### Booking Flow (PickRide)
+### Booking Flow (Ride)
 1. Input lokasi jemput (auto-detect GPS)
 2. Input lokasi tujuan
 3. Pilih tipe kendaraan (motor/car)
@@ -58,7 +65,7 @@
 9. Sampai tujuan - pembayaran
 10. Rating & tip driver
 
-### Booking Flow (PickFood)
+### Booking Flow (Food)
 1. Browse/search restoran
 2. Lihat menu restoran
 3. Tambah item ke keranjang
@@ -69,12 +76,13 @@
 8. Rating restoran & driver
 
 ### Payment
-- PickPay (e-wallet internal)
+- DELIVRY Pay (e-wallet internal)
   - Top up via bank transfer, e-wallet lain
   - QR payment
   - Transfer antar user
 - Cash
 - Kartu debit/kredit
+- Apple Pay / Google Pay (platform native)
 
 ### Activity / Order History
 - Ongoing orders (real-time)

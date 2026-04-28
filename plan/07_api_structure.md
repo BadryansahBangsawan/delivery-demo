@@ -1,4 +1,4 @@
-# Pick Up - API & Backend Structure
+# DELIVRY - API & Backend Structure
 
 ## Backend Stack (Recommended)
 - **API**: Node.js (Express/Fastify) atau Go

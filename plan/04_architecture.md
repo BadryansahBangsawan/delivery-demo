@@ -1,314 +1,293 @@
-# Pick Up - Architecture & Project Structure
+# DELIVRY - Architecture & Project Structure
 
 ## Architecture Pattern
-**Clean Architecture + BLoC Pattern**
+**Feature-based Architecture + React Query + Zustand**
 
 ```
-Presentation (UI)  -->  Domain (Business Logic)  -->  Data (Repository)
-     |                        |                           |
-   Widgets               Use Cases                  API / Local DB
-   Screens               Entities                   Models
-   BLoC/Cubit            Repositories (abstract)    Data Sources
+Screens (UI)  -->  Hooks (Business Logic)  -->  Services (API/Data)
+     |                     |                           |
+  Components          React Query               API Client
+  Navigation          Zustand Store              Local Storage
+  Forms               Custom Hooks               WebSocket
 ```
 
 ## State Management
-- **BLoC / Cubit** untuk state management feature flow (auth, booking, tracking)
-- **flutter_riverpod** untuk dependency injection + global app state ringan (theme/session/helper provider)
-- Hindari `Provider` legacy, fokus ke kombinasi BLoC + Riverpod
+- **React Query (TanStack Query)** untuk server state (API calls, caching, sync)
+- **Zustand** untuk client state ringan (auth session, theme, UI state)
+- **React Hook Form + Zod** untuk form state & validation
+- Hindari Redux — terlalu boilerplate untuk kebutuhan ini
+
+## Navigation
+- **React Navigation v7** (@react-navigation/native)
+  - Stack Navigator: flow screens (auth, booking)
+  - Bottom Tab Navigator: main tabs
+  - Native Stack: native transitions per-platform
 
 ## Folder Structure
 
 ```
-lib/
+src/
 |
-+-- main.dart                       # App entry point
-+-- app.dart                        # MaterialApp configuration
++-- app/                              # App entry & providers
+|   +-- App.tsx                       # Root component
+|   +-- providers.tsx                 # Query, Navigation, Theme providers
 |
-+-- core/
-|   +-- constants/
-|   |   +-- app_colors.dart         # Color palette
-|   |   +-- app_typography.dart     # Text styles
-|   |   +-- app_spacing.dart        # Padding, margin, radius values
-|   |   +-- app_assets.dart         # Asset paths
-|   |   +-- api_endpoints.dart      # API base URLs & endpoints
-|   |
-|   +-- theme/
-|   |   +-- app_theme.dart          # ThemeData (light)
-|   |   +-- app_theme_dark.dart     # ThemeData (dark) - future
-|   |
-|   +-- utils/
-|   |   +-- validators.dart         # Form validation
-|   |   +-- formatters.dart         # Currency, date, phone format
-|   |   +-- location_helper.dart    # GPS utilities
-|   |
-|   +-- widgets/
-|   |   +-- pickup_button.dart      # Primary button
-|   |   +-- pickup_text_field.dart  # Custom text input
-|   |   +-- pickup_card.dart        # Card with shadow
-|   |   +-- pickup_app_bar.dart     # Custom app bar
-|   |   +-- pickup_bottom_sheet.dart
-|   |   +-- loading_overlay.dart
-|   |   +-- rating_stars.dart
-|   |
-|   +-- network/
-|   |   +-- api_client.dart         # Dio/http client setup
-|   |   +-- api_interceptor.dart    # Auth token, logging
-|   |   +-- api_exceptions.dart     # Custom exceptions
-|   |
-|   +-- router/
-|       +-- app_router.dart         # GoRouter configuration
-|       +-- route_names.dart        # Named route constants
++-- assets/                           # Static assets
+|   +-- fonts/                        # Plus Jakarta Sans font files
+|   +-- images/                       # PNG/JPG assets
+|   +-- icons/                        # Custom SVG icons (jika ada)
+|   +-- lottie/                       # Lottie animation files
 |
-+-- features/
++-- components/                       # Shared UI components
+|   +-- ui/                           # Base design system components
+|   |   +-- Button.tsx                # DelivryButton
+|   |   +-- Input.tsx                 # DelivryInput
+|   |   +-- Card.tsx                  # DelivryCard
+|   |   +-- Badge.tsx                 # Status badges
+|   |   +-- Avatar.tsx                # User avatar
+|   |   +-- Skeleton.tsx             # Loading skeleton
+|   |   +-- BottomSheet.tsx          # Bottom sheet wrapper
+|   |   +-- Chip.tsx                  # Filter chips
+|   +-- layout/                       # Layout components
+|   |   +-- SafeAreaWrapper.tsx       # Safe area with consistent padding
+|   |   +-- ScreenWrapper.tsx        # Standard screen container
+|   +-- feedback/                     # Loading, error, empty states
+|   |   +-- LoadingOverlay.tsx
+|   |   +-- ErrorView.tsx
+|   |   +-- EmptyState.tsx
+|
++-- constants/                        # App-wide constants
+|   +-- colors.ts                     # Color palette
+|   +-- typography.ts                 # Font sizes, weights, families
+|   +-- spacing.ts                    # Spacing tokens
+|   +-- api.ts                        # API base URLs & endpoints
+|
++-- features/                         # Feature modules
 |   |
 |   +-- auth/
-|   |   +-- data/
-|   |   |   +-- models/
-|   |   |   |   +-- user_model.dart
-|   |   |   +-- repositories/
-|   |   |   |   +-- auth_repository_impl.dart
-|   |   |   +-- datasources/
-|   |   |       +-- auth_remote_datasource.dart
-|   |   |       +-- auth_local_datasource.dart
-|   |   +-- domain/
-|   |   |   +-- entities/
-|   |   |   |   +-- user.dart
-|   |   |   +-- repositories/
-|   |   |   |   +-- auth_repository.dart
-|   |   |   +-- usecases/
-|   |   |       +-- send_otp.dart
-|   |   |       +-- verify_otp.dart
-|   |   |       +-- login_google.dart
-|   |   |       +-- logout.dart
-|   |   +-- presentation/
-|   |       +-- bloc/
-|   |       |   +-- auth_bloc.dart
-|   |       |   +-- auth_event.dart
-|   |       |   +-- auth_state.dart
-|   |       +-- screens/
-|   |       |   +-- splash_screen.dart
-|   |       |   +-- onboarding_screen.dart
-|   |       |   +-- login_screen.dart
-|   |       |   +-- otp_screen.dart
-|   |       |   +-- setup_profile_screen.dart
-|   |       +-- widgets/
-|   |           +-- phone_input.dart
-|   |           +-- otp_input.dart
+|   |   +-- screens/
+|   |   |   +-- SplashScreen.tsx
+|   |   |   +-- OnboardingScreen.tsx
+|   |   |   +-- LoginScreen.tsx
+|   |   |   +-- OTPScreen.tsx
+|   |   |   +-- SetupProfileScreen.tsx
+|   |   +-- components/
+|   |   |   +-- PhoneInput.tsx
+|   |   |   +-- OTPInput.tsx
+|   |   +-- hooks/
+|   |   |   +-- useAuth.ts
+|   |   |   +-- useSendOTP.ts
+|   |   |   +-- useVerifyOTP.ts
+|   |   +-- services/
+|   |   |   +-- authService.ts
+|   |   +-- types.ts
 |   |
 |   +-- home/
-|   |   +-- data/
-|   |   +-- domain/
-|   |   +-- presentation/
-|   |       +-- bloc/
-|   |       +-- screens/
-|   |       |   +-- home_screen.dart
-|   |       +-- widgets/
-|   |           +-- service_grid.dart
-|   |           +-- promo_banner.dart
-|   |           +-- recent_orders.dart
-|   |           +-- nearby_restaurants.dart
-|   |           +-- search_bar_widget.dart
+|   |   +-- screens/
+|   |   |   +-- HomeScreen.tsx
+|   |   +-- components/
+|   |   |   +-- ServiceGrid.tsx
+|   |   |   +-- PromoBanner.tsx
+|   |   |   +-- RecentOrders.tsx
+|   |   |   +-- NearbyRestaurants.tsx
+|   |   |   +-- SearchBar.tsx
+|   |   +-- hooks/
+|   |   |   +-- useHome.ts
 |   |
 |   +-- ride/
-|   |   +-- data/
-|   |   |   +-- models/
-|   |   |   |   +-- ride_model.dart
-|   |   |   |   +-- driver_model.dart
-|   |   |   |   +-- route_model.dart
-|   |   |   +-- repositories/
-|   |   |   +-- datasources/
-|   |   +-- domain/
-|   |   |   +-- entities/
-|   |   |   +-- repositories/
-|   |   |   +-- usecases/
-|   |   |       +-- search_location.dart
-|   |   |       +-- get_price_estimate.dart
-|   |   |       +-- book_ride.dart
-|   |   |       +-- cancel_ride.dart
-|   |   |       +-- rate_driver.dart
-|   |   +-- presentation/
-|   |       +-- bloc/
-|   |       |   +-- ride_bloc.dart
-|   |       |   +-- location_bloc.dart
-|   |       +-- screens/
-|   |       |   +-- pick_location_screen.dart
-|   |       |   +-- choose_ride_screen.dart
-|   |       |   +-- searching_driver_screen.dart
-|   |       |   +-- tracking_screen.dart
-|   |       |   +-- ride_complete_screen.dart
-|   |       +-- widgets/
-|   |           +-- location_input.dart
-|   |           +-- ride_option_card.dart
-|   |           +-- driver_info_card.dart
-|   |           +-- map_widget.dart
+|   |   +-- screens/
+|   |   |   +-- PickLocationScreen.tsx
+|   |   |   +-- ChooseRideScreen.tsx
+|   |   |   +-- SearchingDriverScreen.tsx
+|   |   |   +-- TrackingScreen.tsx
+|   |   |   +-- RideCompleteScreen.tsx
+|   |   +-- components/
+|   |   |   +-- LocationInput.tsx
+|   |   |   +-- RideOptionCard.tsx
+|   |   |   +-- DriverInfoCard.tsx
+|   |   |   +-- MapView.tsx
+|   |   +-- hooks/
+|   |   |   +-- useRide.ts
+|   |   |   +-- useLocation.ts
+|   |   |   +-- usePriceEstimate.ts
+|   |   +-- services/
+|   |   |   +-- rideService.ts
+|   |   +-- types.ts
 |   |
 |   +-- food/
-|   |   +-- data/
-|   |   |   +-- models/
-|   |   |   |   +-- restaurant_model.dart
-|   |   |   |   +-- menu_item_model.dart
-|   |   |   |   +-- cart_model.dart
-|   |   |   +-- repositories/
-|   |   |   +-- datasources/
-|   |   +-- domain/
-|   |   |   +-- entities/
-|   |   |   +-- repositories/
-|   |   |   +-- usecases/
-|   |   |       +-- get_restaurants.dart
-|   |   |       +-- get_menu.dart
-|   |   |       +-- place_order.dart
-|   |   +-- presentation/
-|   |       +-- bloc/
-|   |       |   +-- food_bloc.dart
-|   |       |   +-- cart_bloc.dart
-|   |       +-- screens/
-|   |       |   +-- food_home_screen.dart
-|   |       |   +-- restaurant_detail_screen.dart
-|   |       |   +-- cart_screen.dart
-|   |       |   +-- food_tracking_screen.dart
-|   |       +-- widgets/
-|   |           +-- restaurant_card.dart
-|   |           +-- menu_item_tile.dart
-|   |           +-- cart_item_tile.dart
-|   |           +-- category_chips.dart
+|   |   +-- screens/
+|   |   |   +-- FoodHomeScreen.tsx
+|   |   |   +-- RestaurantDetailScreen.tsx
+|   |   |   +-- CartScreen.tsx
+|   |   |   +-- FoodTrackingScreen.tsx
+|   |   +-- components/
+|   |   |   +-- RestaurantCard.tsx
+|   |   |   +-- MenuItemTile.tsx
+|   |   |   +-- CartItemTile.tsx
+|   |   |   +-- CategoryChips.tsx
+|   |   +-- hooks/
+|   |   |   +-- useRestaurants.ts
+|   |   |   +-- useMenu.ts
+|   |   |   +-- useCart.ts
+|   |   +-- services/
+|   |   |   +-- foodService.ts
+|   |   +-- types.ts
 |   |
 |   +-- send/
-|   |   +-- data/
-|   |   +-- domain/
-|   |   +-- presentation/
-|   |       +-- bloc/
-|   |       +-- screens/
-|   |       |   +-- send_package_screen.dart
-|   |       |   +-- package_detail_screen.dart
-|   |       |   +-- send_tracking_screen.dart
-|   |       +-- widgets/
+|   |   +-- screens/
+|   |   |   +-- SendPackageScreen.tsx
+|   |   |   +-- PackageDetailScreen.tsx
+|   |   |   +-- SendTrackingScreen.tsx
+|   |   +-- components/
+|   |   +-- hooks/
+|   |   +-- services/
 |   |
 |   +-- payment/
-|   |   +-- data/
-|   |   +-- domain/
-|   |   +-- presentation/
-|   |       +-- bloc/
-|   |       |   +-- payment_bloc.dart
-|   |       |   +-- wallet_bloc.dart
-|   |       +-- screens/
-|   |       |   +-- wallet_screen.dart
-|   |       |   +-- top_up_screen.dart
-|   |       |   +-- transfer_screen.dart
-|   |       |   +-- payment_method_screen.dart
-|   |       +-- widgets/
-|   |           +-- balance_card.dart
-|   |           +-- transaction_tile.dart
+|   |   +-- screens/
+|   |   |   +-- WalletScreen.tsx
+|   |   |   +-- TopUpScreen.tsx
+|   |   |   +-- TransferScreen.tsx
+|   |   |   +-- PaymentMethodScreen.tsx
+|   |   +-- components/
+|   |   |   +-- BalanceCard.tsx
+|   |   |   +-- TransactionTile.tsx
+|   |   +-- hooks/
+|   |   |   +-- useWallet.ts
+|   |   |   +-- useTransactions.ts
+|   |   +-- services/
+|   |   |   +-- paymentService.ts
 |   |
 |   +-- activity/
-|   |   +-- data/
-|   |   +-- domain/
-|   |   +-- presentation/
-|   |       +-- screens/
-|   |       |   +-- activity_screen.dart
-|   |       |   +-- order_detail_screen.dart
-|   |       +-- widgets/
-|   |           +-- order_card.dart
+|   |   +-- screens/
+|   |   |   +-- ActivityScreen.tsx
+|   |   |   +-- OrderDetailScreen.tsx
+|   |   +-- components/
+|   |   |   +-- OrderCard.tsx
+|   |   +-- hooks/
 |   |
 |   +-- chat/
-|   |   +-- data/
-|   |   +-- domain/
-|   |   +-- presentation/
-|   |       +-- screens/
-|   |       |   +-- chat_list_screen.dart
-|   |       |   +-- chat_room_screen.dart
-|   |       +-- widgets/
-|   |           +-- message_bubble.dart
-|   |           +-- quick_reply_chips.dart
+|   |   +-- screens/
+|   |   |   +-- ChatListScreen.tsx
+|   |   |   +-- ChatRoomScreen.tsx
+|   |   +-- components/
+|   |   |   +-- MessageBubble.tsx
+|   |   |   +-- QuickReplyChips.tsx
+|   |   +-- hooks/
+|   |   |   +-- useChat.ts
 |   |
 |   +-- profile/
-|       +-- data/
-|       +-- domain/
-|       +-- presentation/
-|           +-- screens/
-|           |   +-- profile_screen.dart
-|           |   +-- edit_profile_screen.dart
-|           |   +-- saved_addresses_screen.dart
-|           |   +-- settings_screen.dart
-|           |   +-- help_screen.dart
-|           +-- widgets/
-|               +-- profile_header.dart
-|               +-- menu_item_tile.dart
+|       +-- screens/
+|       |   +-- ProfileScreen.tsx
+|       |   +-- EditProfileScreen.tsx
+|       |   +-- SavedAddressesScreen.tsx
+|       |   +-- SettingsScreen.tsx
+|       |   +-- HelpScreen.tsx
+|       +-- components/
+|       |   +-- ProfileHeader.tsx
+|       |   +-- MenuItemTile.tsx
+|       +-- hooks/
 |
-+-- l10n/                           # Localization
-    +-- app_id.arb                  # Bahasa Indonesia
-    +-- app_en.arb                  # English
++-- hooks/                            # Shared hooks
+|   +-- useAppState.ts                # App foreground/background
+|   +-- useKeyboard.ts               # Keyboard visibility
+|   +-- useLocation.ts               # GPS location
+|   +-- useNetworkStatus.ts          # Online/offline detection
+|
++-- lib/                              # Utilities & configurations
+|   +-- api.ts                        # Axios/fetch client setup
+|   +-- queryClient.ts               # React Query client config
+|   +-- storage.ts                    # AsyncStorage / SecureStore helpers
+|   +-- validators.ts                # Zod schemas
+|   +-- formatters.ts                # Currency, date, phone formatters
+|
++-- navigation/                       # Navigation configuration
+|   +-- RootNavigator.tsx            # Root stack (auth/main switch)
+|   +-- MainTabNavigator.tsx         # Bottom tab navigator
+|   +-- AuthStackNavigator.tsx       # Auth flow stack
+|   +-- RideStackNavigator.tsx       # Ride booking flow
+|   +-- FoodStackNavigator.tsx       # Food ordering flow
+|   +-- types.ts                      # Navigation param types
+|
++-- store/                            # Zustand stores
+|   +-- authStore.ts                  # Auth state (token, user)
+|   +-- cartStore.ts                  # Food cart state
+|   +-- locationStore.ts             # Current GPS location
+|
++-- theme/                            # Theme configuration
+|   +-- index.ts                      # Combined theme export
+|   +-- light.ts                      # Light theme tokens
+|   +-- dark.ts                       # Dark theme tokens (Phase 2)
+|
++-- types/                            # Shared TypeScript types
+    +-- api.ts                        # API response types
+    +-- navigation.ts                 # Navigation params
+    +-- models.ts                     # Data models (User, Ride, Order)
 ```
 
-## Key Dependencies (pubspec.yaml)
+## Key Dependencies (package.json)
 
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
+```json
+{
+  "dependencies": {
+    "react": "^18.3.0",
+    "react-native": "^0.76.0",
 
-  # State Management
-  flutter_bloc: ^9.0.0
-  equatable: ^2.0.7
+    "// Navigation": "",
+    "@react-navigation/native": "^7.0.0",
+    "@react-navigation/native-stack": "^7.0.0",
+    "@react-navigation/bottom-tabs": "^7.0.0",
+    "react-native-screens": "^4.0.0",
+    "react-native-safe-area-context": "^5.0.0",
 
-  # Navigation
-  go_router: ^latest
-  flutter_riverpod: ^latest
+    "// State & Data": "",
+    "@tanstack/react-query": "^5.0.0",
+    "zustand": "^5.0.0",
+    "axios": "^1.7.0",
 
-  # Network
-  dio: ^5.4.0
+    "// Forms": "",
+    "react-hook-form": "^7.0.0",
+    "@hookform/resolvers": "^3.0.0",
+    "zod": "^3.23.0",
 
-  # Local Storage
-  shared_preferences: ^2.3.0
-  flutter_secure_storage: ^9.2.0
+    "// Maps": "",
+    "react-native-maps": "^1.18.0",
+    "react-native-maps-directions": "^1.9.0",
 
-  # Maps
-  google_maps_flutter: ^2.9.0
-  geolocator: ^13.0.0
-  geocoding: ^3.0.0
+    "// UI": "",
+    "@gorhom/bottom-sheet": "^5.0.0",
+    "react-native-reanimated": "^3.16.0",
+    "react-native-gesture-handler": "^2.20.0",
+    "react-native-svg": "^15.0.0",
+    "lottie-react-native": "^7.0.0",
+    "react-native-skeleton-placeholder": "^5.0.0",
+    "react-native-fast-image": "^8.0.0",
+    "lucide-react-native": "^0.460.0",
 
-  # Firebase
-  firebase_core: ^3.0.0
-  firebase_auth: ^5.0.0
-  firebase_messaging: ^15.0.0
-  cloud_firestore: ^5.0.0
+    "// Storage": "",
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "react-native-keychain": "^9.0.0",
 
-  # UI
-  shadcn_ui: ^latest
-  flutter_form_builder: ^latest
-  cached_network_image: ^latest
-  flutter_svg: ^latest
-  lottie: ^latest
-  fl_chart: ^latest
-  shimmer: ^3.0.0
+    "// Notifications": "",
+    "@react-native-firebase/app": "^21.0.0",
+    "@react-native-firebase/messaging": "^21.0.0",
 
-  # Utils
-  intl: ^0.19.0
-  url_launcher: ^6.3.0
-  image_picker: ^1.1.0
-  permission_handler: ^11.3.0
+    "// Auth": "",
+    "@react-native-google-signin/google-signin": "^13.0.0",
 
-  # Icons
-  iconsax_flutter: ^1.0.0
+    "// Utils": "",
+    "react-native-image-picker": "^7.0.0",
+    "react-native-permissions": "^5.0.0",
+    "date-fns": "^4.0.0",
+    "react-native-haptic-feedback": "^2.3.0"
+  }
+}
 ```
-
-## Komponen UI Prioritas (`shadcn_ui`)
-
-Gunakan `shadcn_ui` sebagai building blocks, lalu bungkus ke komponen internal `pickup_*` agar desain tetap konsisten lintas fitur:
-
-- `ShadButton` -> wrapper di `pickup_button.dart` (tinggi 52, radius 12, state loading/disabled)
-- `ShadInput` / form controls -> wrapper di `pickup_text_field.dart` + integrasi `flutter_form_builder`
-- `ShadCard` -> wrapper di `pickup_card.dart` untuk list, promo, dan summary
-- `ShadBadge` -> status order/payment
-- `ShadSheet` / `ShadDialog` -> payment picker, konfirmasi cancel
-- `ShadTabs` -> Activity (ongoing/completed), riwayat transaksi
-- `ShadSkeleton` -> loading state list (home, restoran, history)
-
-Catatan: seluruh wrapper tetap wajib mengikuti spec `plan/05_design_system.md` + aksesibilitas Android di `plan/10_android_accessibility.md`.
 
 ## Naming Convention
-- **Files**: snake_case (`home_screen.dart`)
-- **Classes**: PascalCase (`HomeScreen`)
+- **Files**: PascalCase for components (`HomeScreen.tsx`), camelCase for utils/hooks (`useAuth.ts`)
+- **Components**: PascalCase (`HomeScreen`)
+- **Hooks**: camelCase with `use` prefix (`useAuth`)
 - **Variables**: camelCase (`userName`)
 - **Constants**: camelCase (`primaryColor`) atau SCREAMING_SNAKE_CASE untuk env
-- **BLoC Events**: PascalCase verb (`RideBooked`, `OtpSent`)
-- **BLoC States**: PascalCase adjective (`RideLoading`, `RideSuccess`)
+- **Types/Interfaces**: PascalCase (`User`, `RideEstimate`)
+- **Folders**: kebab-case atau camelCase (consistent within project)
