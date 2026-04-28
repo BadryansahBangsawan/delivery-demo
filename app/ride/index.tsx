@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { ArrowLeft, Clock3, MapPin } from 'lucide-react-native';
+import { ArrowLeft, Clock3, MapPin } from '@/components/ui/TailwindIcon';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { Input } from '@/components/ui/Input';
@@ -53,7 +53,7 @@ export default function PickLocationScreen() {
           end={{ x: 1, y: 1 }}
           style={styles.mapPlaceholder}
         >
-          <Text style={styles.mapPin}>📍</Text>
+          <MapPin size={30} color={Colors.primary} strokeWidth={2.2} />
           <Text style={styles.mapTitle}>Map Preview</Text>
           <Text style={styles.mapCaption}>Tentukan titik jemput & tujuanmu</Text>
         </LinearGradient>
@@ -156,9 +156,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
-  },
-  mapPin: {
-    fontSize: 32,
   },
   mapTitle: {
     fontFamily: FontFamily.semiBold,

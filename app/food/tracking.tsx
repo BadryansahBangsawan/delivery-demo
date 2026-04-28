@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { MessageCircle, Phone } from 'lucide-react-native';
+import { MessageCircle, Phone } from '@/components/ui/TailwindIcon';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { Button } from '@/components/ui/Button';

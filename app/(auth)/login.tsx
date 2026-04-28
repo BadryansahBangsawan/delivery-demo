@@ -15,7 +15,7 @@ import {
   View,
 } from 'react-native';
 import { router } from 'expo-router';
-import { Phone, ArrowRight } from 'lucide-react-native';
+import { Phone, ArrowRight, User, CheckCircle } from '@/components/ui/TailwindIcon';
 
 import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
@@ -123,7 +123,7 @@ export default function LoginScreen() {
             accessibilityLabel="Masuk dengan Google"
             hitSlop={HIT_SLOP}
           >
-            <Text style={styles.socialEmoji}>🇬</Text>
+            <User size={18} color={Colors.textPrimary} strokeWidth={2} />
             <Text style={styles.socialLabel}>Google</Text>
           </Pressable>
 
@@ -134,7 +134,7 @@ export default function LoginScreen() {
               accessibilityLabel="Masuk dengan Apple"
               hitSlop={HIT_SLOP}
             >
-              <Text style={styles.socialEmoji}>🍎</Text>
+              <CheckCircle size={18} color={Colors.textPrimary} strokeWidth={2} />
               <Text style={styles.socialLabel}>Apple</Text>
             </Pressable>
           )}
@@ -282,9 +282,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-  },
-  socialEmoji: {
-    fontSize: 18,
   },
   socialLabel: {
     fontFamily: FontFamily.medium,

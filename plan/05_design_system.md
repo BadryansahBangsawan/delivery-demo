@@ -172,7 +172,7 @@ Gunakan komponen-komponen berikut sebagai dasar, lalu customize sesuai brand DEL
 | Bottom sheet | `@gorhom/bottom-sheet` | Payment selector, cancel confirmation |
 | Toast/notification | `react-native-toast-message` atau `sonner-native` | Success, error, info messages |
 | Skeleton loading | `react-native-skeleton-placeholder` | Home sections, list restoran, riwayat transaksi |
-| Icons | `lucide-react-native` | Outlined, 1.5px stroke, consistent |
+| Icons | `react-native-heroicons` | Tailwind Heroicons, outlined style |
 
 Prinsip: komponen umum dibungkus di `src/components/ui/` agar perubahan design system tidak menyentuh seluruh fitur.
 
@@ -200,7 +200,7 @@ Prinsip: komponen umum dibungkus di `src/components/ui/` agar perubahan design s
 
 ## Iconography
 - Style: **Outlined / Linear** (bukan filled)
-- Library: **Lucide React Native** (`lucide-react-native`)
+- Library: **Tailwind Heroicons** (`react-native-heroicons`)
 - Size: 20px (compact), 24px (default), 28px (emphasis)
 - Stroke: 1.5px
 - Color: mengikuti text color, atau Primary (#7B2FF2) untuk active state

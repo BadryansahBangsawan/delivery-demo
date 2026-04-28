@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft } from '@/components/ui/TailwindIcon';
 
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';

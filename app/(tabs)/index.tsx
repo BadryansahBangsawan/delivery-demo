@@ -16,6 +16,8 @@ import React, { useCallback } from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
+  ImageSourcePropType,
   ListRenderItemInfo,
   Pressable,
   ScrollView,
@@ -33,7 +35,13 @@ import {
   Clock,
   MapPin,
   ChevronRight,
-} from 'lucide-react-native';
+  Bike,
+  Car,
+  Package,
+  Send,
+  ShoppingBag,
+  Plus,
+} from '@/components/ui/TailwindIcon';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -55,7 +63,7 @@ const CARD_WIDTH = SCREEN_WIDTH * 0.62;
 interface Service {
   id: string;
   label: string;
-  emoji: string;
+  icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
   bg: string;
 }
 
@@ -64,7 +72,7 @@ interface RecentOrder {
   service: string;
   destination: string;
   label: string;
-  icon: string;
+  icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
 }
 
 interface Restaurant {
@@ -74,31 +82,55 @@ interface Restaurant {
   distance: string;
   time: string;
   category: string;
-  emoji: string;
+  image: ImageSourcePropType;
 }
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const SERVICES: Service[] = [
-  { id: 'ride',     label: 'Ride',     emoji: '🛵', bg: Colors.primaryLight },
-  { id: 'car',      label: 'Car',      emoji: '🚗', bg: '#DBEAFE' },
-  { id: 'delivery', label: 'Delivery', emoji: '📦', bg: '#FEF3C7' },
-  { id: 'food',     label: 'Food',     emoji: '🍜', bg: '#FEE2E2' },
-  { id: 'send',     label: 'Send',     emoji: '📫', bg: '#DCFCE7' },
-  { id: 'package',  label: 'Package',  emoji: '🗃️', bg: '#EDE9FE' },
-  { id: 'mart',     label: 'Mart',     emoji: '🛒', bg: '#CFFAFE' },
-  { id: 'more',     label: 'Lainnya',  emoji: '⋯',  bg: Colors.surfaceAlt },
+  { id: 'ride',     label: 'Ride',     icon: Bike,        bg: Colors.primaryLight },
+  { id: 'car',      label: 'Car',      icon: Car,         bg: '#DBEAFE' },
+  { id: 'delivery', label: 'Delivery', icon: Package,     bg: '#FEF3C7' },
+  { id: 'food',     label: 'Food',     icon: ShoppingBag, bg: '#FEE2E2' },
+  { id: 'send',     label: 'Send',     icon: Send,        bg: '#DCFCE7' },
+  { id: 'package',  label: 'Package',  icon: Package,     bg: '#EDE9FE' },
+  { id: 'mart',     label: 'Mart',     icon: ShoppingBag, bg: '#CFFAFE' },
+  { id: 'more',     label: 'Lainnya',  icon: Plus,        bg: Colors.surfaceAlt },
 ];
 
 const RECENT_ORDERS: RecentOrder[] = [
-  { id: '1', service: 'Ride', destination: 'Kantor', label: 'Jl. Sudirman No.10', icon: '🛵' },
-  { id: '2', service: 'Food', destination: 'Rumah',  label: 'Jl. Merdeka 5',      icon: '🍜' },
+  { id: '1', service: 'Ride', destination: 'Kantor', label: 'Jl. Sudirman No.10', icon: Bike },
+  { id: '2', service: 'Food', destination: 'Rumah',  label: 'Jl. Merdeka 5',      icon: ShoppingBag },
 ];
 
 const RESTAURANTS: Restaurant[] = [
-  { id: '1', name: 'Warung Nasi Goreng', rating: '4.9', distance: '1.2 km', time: '20-30 min', category: 'Nasi', emoji: '🍳' },
-  { id: '2', name: 'Mie Ayam Pak Joko',  rating: '4.7', distance: '0.8 km', time: '15-25 min', category: 'Mie',  emoji: '🍝' },
-  { id: '3', name: 'Soto Betawi Bu Sari', rating: '4.8', distance: '2.1 km', time: '25-35 min', category: 'Soto', emoji: '🥘' },
+  {
+    id: '1',
+    name: 'Warung Nasi Goreng',
+    rating: '4.9',
+    distance: '1.2 km',
+    time: '20-30 min',
+    category: 'Nasi',
+    image: require('../../assets/images/splash-icon.png'),
+  },
+  {
+    id: '2',
+    name: 'Mie Ayam Pak Joko',
+    rating: '4.7',
+    distance: '0.8 km',
+    time: '15-25 min',
+    category: 'Mie',
+    image: require('../../assets/images/icon.png'),
+  },
+  {
+    id: '3',
+    name: 'Soto Betawi Bu Sari',
+    rating: '4.8',
+    distance: '2.1 km',
+    time: '25-35 min',
+    category: 'Soto',
+    image: require('../../assets/images/android-icon-foreground.png'),
+  },
 ];
 
 // ─── Sub-components (memoised) ────────────────────────────────────────────────
@@ -112,6 +144,7 @@ const ServiceItem = React.memo(function ServiceItem({
 }) {
   const scale = useSharedValue(1);
   const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  const Icon = item.icon;
 
   return (
     <Animated.View style={animStyle}>
@@ -125,7 +158,7 @@ const ServiceItem = React.memo(function ServiceItem({
         hitSlop={HIT_SLOP}
       >
         <View style={[styles.serviceIcon, { backgroundColor: item.bg }]}>
-          <Text style={styles.serviceEmoji}>{item.emoji}</Text>
+          <Icon size={22} color={Colors.primary} strokeWidth={2.1} />
         </View>
         <Text style={styles.serviceLabel}>{item.label}</Text>
       </Pressable>
@@ -140,9 +173,8 @@ const RestaurantCard = React.memo(function RestaurantCard({ item }: { item: Rest
       onPress={() => router.push({ pathname: '/food/[restaurantId]', params: { restaurantId: item.id } })}
       accessibilityLabel={`${item.name}, rating ${item.rating}, ${item.distance}`}
     >
-      {/* Emoji illustration */}
       <View style={styles.restaurantImgPlaceholder}>
-        <Text style={styles.restaurantEmoji}>{item.emoji}</Text>
+        <Image source={item.image} style={styles.restaurantImage} resizeMode="contain" />
       </View>
 
       <View style={styles.restaurantInfo}>
@@ -200,7 +232,7 @@ export default function HomeScreen() {
         {/* ── Header ── */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Hai, Andi 👋</Text>
+            <Text style={styles.greeting}>Hai, Andi</Text>
             <Text style={styles.tagline}>Mau ke mana hari ini?</Text>
           </View>
 
@@ -243,11 +275,11 @@ export default function HomeScreen() {
           style={styles.brandBanner}
         >
           <View style={styles.brandBannerLeft}>
-            <Text style={styles.brandBannerBadge}>🎉 DISKON 20%</Text>
+            <Text style={styles.brandBannerBadge}>DISKON 20%</Text>
             <Text style={styles.brandBannerTitle}>Untuk semua{'\n'}layanan</Text>
             <Text style={styles.brandBannerSub}>Pakai kode: MOVE20</Text>
           </View>
-          <Text style={styles.brandBannerEmoji}>🛵</Text>
+          <Image source={require('../../assets/images/icon.png')} style={styles.bannerImage} resizeMode="contain" />
         </LinearGradient>
 
         {/* ── Service Grid ── */}
@@ -283,7 +315,7 @@ export default function HomeScreen() {
               <Text style={styles.promoLabel}>Gratis Ongkir</Text>
               <Text style={styles.promoTitle}>Order Food{'\n'}pertamamu</Text>
             </View>
-            <Text style={styles.promoEmoji}>🍜</Text>
+            <Image source={require('../../assets/images/splash-icon.png')} style={styles.promoImage} resizeMode="contain" />
           </LinearGradient>
 
           <LinearGradient
@@ -296,7 +328,7 @@ export default function HomeScreen() {
               <Text style={styles.promoLabel}>Hemat 15%</Text>
               <Text style={styles.promoTitle}>Ride ke{'\n'}kantormu</Text>
             </View>
-            <Text style={styles.promoEmoji}>🛵</Text>
+            <Image source={require('../../assets/images/android-icon-foreground.png')} style={styles.promoImage} resizeMode="contain" />
           </LinearGradient>
         </View>
 
@@ -306,23 +338,26 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.recentList}>
-          {RECENT_ORDERS.map((order) => (
-            <Card
-              key={order.id}
-              onPress={() => {}}
-              style={styles.recentCard}
-              accessibilityLabel={`${order.service} ke ${order.destination}`}
-            >
-              <View style={[styles.recentIcon, { backgroundColor: Colors.primaryLight }]}>
-                <Text style={styles.recentEmoji}>{order.icon}</Text>
-              </View>
-              <View style={styles.recentInfo}>
-                <Text style={styles.recentService}>{order.service}</Text>
-                <Text style={styles.recentDest} numberOfLines={1}>{order.label}</Text>
-              </View>
-              <ChevronRight size={18} color={Colors.textHint} strokeWidth={2} />
-            </Card>
-          ))}
+          {RECENT_ORDERS.map((order) => {
+            const Icon = order.icon;
+            return (
+              <Card
+                key={order.id}
+                onPress={() => {}}
+                style={styles.recentCard}
+                accessibilityLabel={`${order.service} ke ${order.destination}`}
+              >
+                <View style={[styles.recentIcon, { backgroundColor: Colors.primaryLight }]}>
+                  <Icon size={18} color={Colors.primary} strokeWidth={2.2} />
+                </View>
+                <View style={styles.recentInfo}>
+                  <Text style={styles.recentService}>{order.service}</Text>
+                  <Text style={styles.recentDest} numberOfLines={1}>{order.label}</Text>
+                </View>
+                <ChevronRight size={18} color={Colors.textHint} strokeWidth={2} />
+              </Card>
+            );
+          })}
         </View>
 
         {/* ── Nearby restaurants ── */}
@@ -455,8 +490,9 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.8)',
     marginTop: 4,
   },
-  brandBannerEmoji: {
-    fontSize: 64,
+  bannerImage: {
+    width: 66,
+    height: 66,
   },
 
   // Section header
@@ -499,9 +535,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  serviceEmoji: {
-    fontSize: 24,
-  },
   serviceLabel: {
     fontFamily: FontFamily.medium,
     fontSize: FontSize.caption,
@@ -537,8 +570,9 @@ const styles = StyleSheet.create({
     color: Colors.white,
     lineHeight: 22,
   },
-  promoEmoji: {
-    fontSize: 40,
+  promoImage: {
+    width: 42,
+    height: 42,
   },
 
   // Recent orders
@@ -559,9 +593,6 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  recentEmoji: {
-    fontSize: 22,
   },
   recentInfo: {
     flex: 1,
@@ -594,8 +625,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  restaurantEmoji: {
-    fontSize: 52,
+  restaurantImage: {
+    width: 80,
+    height: 80,
   },
   restaurantInfo: {
     padding: Spacing.md,

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { MapPin, Search, Star } from 'lucide-react-native';
+import { MapPin, Search, Star } from '@/components/ui/TailwindIcon';
 
 import { Card } from '@/components/ui/Card';
 import { Colors } from '@/constants/Colors';
@@ -77,7 +77,11 @@ export default function FoodHomeScreen() {
             accessibilityLabel={`${item.name}, rating ${item.rating}`}
           >
             <View style={styles.restaurantImage}>
-              <Text style={styles.restaurantEmoji}>🍜</Text>
+              <Image
+                source={require('../../assets/images/splash-icon.png')}
+                style={styles.restaurantImageAsset}
+                resizeMode="contain"
+              />
             </View>
 
             <View style={styles.restaurantInfo}>
@@ -186,8 +190,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  restaurantEmoji: {
-    fontSize: 54,
+  restaurantImageAsset: {
+    width: 80,
+    height: 80,
   },
   restaurantInfo: {
     padding: Spacing.md,

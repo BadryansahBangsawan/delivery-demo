@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import { Home, ShoppingBag, Wallet, MessageCircle, User } from 'lucide-react-native';
+import { Home, ShoppingBag, Wallet, MessageCircle, User } from '@/components/ui/TailwindIcon';
 import * as Haptics from 'expo-haptics';
 
 import { Colors } from '@/constants/Colors';

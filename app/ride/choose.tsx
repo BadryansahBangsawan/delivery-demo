@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Bike, Car, ChevronRight, MapPin, Package, Wallet } from 'lucide-react-native';
+import { ArrowLeft, Bike, Car, ChevronRight, MapPin, Package, Wallet } from '@/components/ui/TailwindIcon';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { Button } from '@/components/ui/Button';

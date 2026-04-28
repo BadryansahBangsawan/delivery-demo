@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Plus, Star } from 'lucide-react-native';
+import { ArrowLeft, Plus, Star } from '@/components/ui/TailwindIcon';
 
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
@@ -39,7 +39,11 @@ export default function RestaurantDetailScreen() {
         ListHeaderComponent={
           <>
             <View style={styles.hero}>
-              <Text style={styles.heroEmoji}>🍽️</Text>
+              <Image
+                source={require('../../assets/images/icon.png')}
+                style={styles.heroImage}
+                resizeMode="contain"
+              />
             </View>
 
             <View style={styles.restaurantInfo}>
@@ -123,8 +127,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heroEmoji: {
-    fontSize: 72,
+  heroImage: {
+    width: 108,
+    height: 108,
   },
   restaurantInfo: {
     padding: Spacing.base,

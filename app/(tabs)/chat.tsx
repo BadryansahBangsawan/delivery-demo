@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { ChevronRight } from 'lucide-react-native';
+import { ChevronRight } from '@/components/ui/TailwindIcon';
 
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';

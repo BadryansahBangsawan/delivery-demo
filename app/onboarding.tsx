@@ -6,6 +6,8 @@ import React, { useCallback, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
+  ImageSourcePropType,
   StyleSheet,
   Text,
   View,
@@ -29,7 +31,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface Slide {
   id: string;
-  emoji: string;
+  image: ImageSourcePropType;
   title: string;
   subtitle: string;
   gradient: [string, string];
@@ -38,21 +40,21 @@ interface Slide {
 const SLIDES: Slide[] = [
   {
     id: '1',
-    emoji: '🛵',
+    image: require('../assets/images/icon.png'),
     title: 'Move Anything\nAnytime',
     subtitle: 'Ride, kirim barang, atau pesan makanan — semua dalam satu app yang cepat.',
     gradient: [Colors.primary, Colors.primaryDark],
   },
   {
     id: '2',
-    emoji: '📦',
+    image: require('../assets/images/android-icon-foreground.png'),
     title: 'Kirim Barang\nTanpa Ribet',
     subtitle: 'Instant courier & same-day delivery. Tracking real-time langsung dari app.',
     gradient: ['#6C2BD9', '#4C1FA8'],
   },
   {
     id: '3',
-    emoji: '🍜',
+    image: require('../assets/images/splash-icon.png'),
     title: 'Pesan Makanan\nFavorit',
     subtitle: 'Restoran terdekat, menu lengkap, langsung diantar. Cepat dan terpercaya.',
     gradient: ['#8B4CF7', '#5A1DB8'],
@@ -64,7 +66,7 @@ const SlideItem = React.memo(function SlideItem({ item }: { item: Slide }) {
   return (
     <View style={styles.slide}>
       <LinearGradient colors={item.gradient} style={styles.illustrationBg} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }}>
-        <Text style={styles.emoji}>{item.emoji}</Text>
+        <Image source={item.image} style={styles.illustrationImage} resizeMode="contain" />
       </LinearGradient>
 
       <Text style={styles.title}>{item.title}</Text>
@@ -199,8 +201,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: Spacing.sm,
   },
-  emoji: {
-    fontSize: 96,
+  illustrationImage: {
+    width: 160,
+    height: 160,
   },
   title: {
     fontFamily: FontFamily.bold,

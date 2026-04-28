@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronRight } from 'lucide-react-native';
+import { ChevronRight } from '@/components/ui/TailwindIcon';
 
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';

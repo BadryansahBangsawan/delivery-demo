@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { ArrowLeft, MapPin, Plus } from 'lucide-react-native';
+import { ArrowLeft, MapPin, Plus } from '@/components/ui/TailwindIcon';
 
 import { Card } from '@/components/ui/Card';
 import { Colors } from '@/constants/Colors';

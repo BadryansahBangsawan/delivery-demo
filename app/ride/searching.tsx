@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
+import { Bike } from '@/components/ui/TailwindIcon';
 
 import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
@@ -50,7 +51,7 @@ export default function SearchingDriverScreen() {
         <View style={styles.radarWrap}>
           <Animated.View style={[styles.radarOuter, pulseStyle]} />
           <View style={styles.radarInner}>
-            <Text style={styles.radarIcon}>🛵</Text>
+            <Bike size={34} color={Colors.white} strokeWidth={2.4} />
           </View>
         </View>
 
@@ -115,9 +116,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  radarIcon: {
-    fontSize: 36,
   },
   fareCard: {
     width: '100%',

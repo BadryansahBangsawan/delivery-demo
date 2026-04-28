@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Star } from 'lucide-react-native';
+import { CheckCircle, Star } from '@/components/ui/TailwindIcon';
 
 import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
@@ -22,7 +22,7 @@ export default function RideCompleteScreen() {
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
       <View style={styles.content}>
-        <Text style={styles.emoji}>✅</Text>
+        <CheckCircle size={44} color={Colors.success} strokeWidth={2.2} />
         <Text style={styles.title}>Perjalanan Selesai!</Text>
         <Text style={styles.total}>{formatIDR(total)}</Text>
         <Text style={styles.sub}>Tarif {formatIDR(fare)}{tip > 0 ? ` + tip ${formatIDR(tip)}` : ''}</Text>
@@ -81,9 +81,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing['2xl'],
     alignItems: 'center',
-  },
-  emoji: {
-    fontSize: 42,
   },
   title: {
     marginTop: Spacing.sm,

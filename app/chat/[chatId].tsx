@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Send } from 'lucide-react-native';
+import { ArrowLeft, Send } from '@/components/ui/TailwindIcon';
 
 import { Colors } from '@/constants/Colors';
 import { chatMessages, chatThreads } from '@/constants/MockData';

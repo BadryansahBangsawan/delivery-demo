@@ -21,7 +21,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft } from '@/components/ui/TailwindIcon';
 
 import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
