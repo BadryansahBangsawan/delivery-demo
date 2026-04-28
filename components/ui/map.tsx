@@ -49,7 +49,7 @@ export function Map({
   zoom = DEFAULT_ZOOM,
   style,
   children,
-  interactive = false,
+  interactive = true,
 }: MapProps) {
   const [latitude, longitude] = center;
   const delta = zoomToDelta(zoom);
@@ -66,7 +66,7 @@ export function Map({
         }}
         scrollEnabled={interactive}
         zoomEnabled={interactive}
-        rotateEnabled={false}
+        rotateEnabled={interactive}
         pitchEnabled={false}
         toolbarEnabled={false}
         showsCompass={false}
