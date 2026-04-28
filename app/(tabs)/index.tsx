@@ -64,7 +64,6 @@ interface Service {
   id: string;
   label: string;
   icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
-  bg: string;
 }
 
 interface RecentOrder {
@@ -88,14 +87,14 @@ interface Restaurant {
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const SERVICES: Service[] = [
-  { id: 'ride',     label: 'Ride',     icon: Bike,        bg: Colors.primaryLight },
-  { id: 'car',      label: 'Car',      icon: Car,         bg: '#DBEAFE' },
-  { id: 'delivery', label: 'Delivery', icon: Package,     bg: '#FEF3C7' },
-  { id: 'food',     label: 'Food',     icon: ShoppingBag, bg: '#FEE2E2' },
-  { id: 'send',     label: 'Send',     icon: Send,        bg: '#DCFCE7' },
-  { id: 'package',  label: 'Package',  icon: Package,     bg: '#EDE9FE' },
-  { id: 'mart',     label: 'Mart',     icon: ShoppingBag, bg: '#CFFAFE' },
-  { id: 'more',     label: 'Lainnya',  icon: Plus,        bg: Colors.surfaceAlt },
+  { id: 'ride',     label: 'Ride',     icon: Bike },
+  { id: 'car',      label: 'Car',      icon: Car },
+  { id: 'delivery', label: 'Delivery', icon: Package },
+  { id: 'food',     label: 'Food',     icon: ShoppingBag },
+  { id: 'send',     label: 'Send',     icon: Send },
+  { id: 'package',  label: 'Package',  icon: Package },
+  { id: 'mart',     label: 'Mart',     icon: ShoppingBag },
+  { id: 'more',     label: 'Lainnya',  icon: Plus },
 ];
 
 const RECENT_ORDERS: RecentOrder[] = [
@@ -157,8 +156,8 @@ const ServiceItem = React.memo(function ServiceItem({
         accessibilityLabel={`${item.label}, tombol`}
         hitSlop={HIT_SLOP}
       >
-        <View style={[styles.serviceIcon, { backgroundColor: item.bg }]}>
-          <Icon size={22} color={Colors.primary} strokeWidth={2.1} />
+        <View style={styles.serviceIcon}>
+          <Icon size={22} color={Colors.white} strokeWidth={2.1} />
         </View>
         <Text style={styles.serviceLabel}>{item.label}</Text>
       </Pressable>
@@ -532,6 +531,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: Radius.md,
+    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },

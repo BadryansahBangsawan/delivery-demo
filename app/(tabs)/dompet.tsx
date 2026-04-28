@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -23,7 +23,7 @@ export default function DompetScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <LinearGradient
           colors={[Colors.primary, Colors.primaryDark]}
           start={{ x: 0, y: 0 }}
@@ -65,7 +65,7 @@ export default function DompetScreen() {
             </Card>
           ))}
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -87,9 +87,13 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
     color: Colors.primary,
   },
+  scroll: {
+    flex: 1,
+  },
   content: {
     padding: Spacing.base,
     gap: Spacing.base,
+    paddingBottom: Spacing['2xl'],
   },
   balanceCard: { borderRadius: Radius.lg, padding: Spacing.base, gap: 8, minHeight: 140 },
   balanceLabel: { fontFamily: FontFamily.medium, fontSize: FontSize.body, color: 'rgba(255,255,255,0.8)' },
