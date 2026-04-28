@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SvgProps } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 import {
   ArchiveBoxIcon,
   ArrowLeftIcon,
@@ -72,7 +73,29 @@ export const LogOut = fromIcon(ArrowLeftOnRectangleIcon);
 export const Settings = fromIcon(Cog6ToothIcon);
 export const Phone = fromIcon(PhoneIcon);
 export const Send = fromIcon(PaperAirplaneIcon);
-export const Bike = fromIcon(TruckIcon);
+export function Bike(props: IconProps) {
+  const { size = 24, color = '#1A1A1A', strokeWidth = 2, ...rest } = props;
+
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...rest}>
+      <Circle cx="6.5" cy="17" r="3" stroke={color} strokeWidth={strokeWidth} />
+      <Circle cx="17.5" cy="17" r="3" stroke={color} strokeWidth={strokeWidth} />
+      <Path
+        d="M7.5 17h3.2l2.5-5.2h2.1l2.2 5.2M10.7 17l-2.2-5h3.8M13.2 11.8l-1.1-2.3h2.7M15.4 9.5h2.1"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M6 12h2.7M16.5 12.1l1.8-1.7"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
 export const Car = fromIcon(TruckIcon);
 export const Package = fromIcon(ArchiveBoxIcon);
 export const Plus = fromIcon(PlusIcon);
