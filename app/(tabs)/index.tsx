@@ -1,98 +1,616 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+/**
+ * Home Screen — Beranda
+ * Static layout per plan/03_user_flow.md:
+ *   • Header (greeting + icons)
+ *   • Search bar
+ *   • DELIVRY promo banner
+ *   • Service grid (4×2)
+ *   • Promo carousel (static)
+ *   • Recent orders
+ *   • Nearby restaurants
+ *
+ * Performance: FlatList for horizontal lists, React.memo for list items.
+ * Solid white (#FFFFFF) backgrounds throughout.
+ */
+import React, { useCallback } from 'react';
+import {
+  Dimensions,
+  FlatList,
+  ListRenderItemInfo,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import {
+  Bell,
+  QrCode,
+  Search,
+  Bike,
+  Car,
+  Package,
+  UtensilsCrossed,
+  Send,
+  Box,
+  ShoppingCart,
+  MoreHorizontal,
+  Star,
+  Clock,
+  MapPin,
+  ChevronRight,
+} from 'lucide-react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
+import { router } from 'expo-router';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Colors } from '@/constants/Colors';
+import { FontFamily, FontSize } from '@/constants/Typography';
+import { Spacing, Radius, HIT_SLOP } from '@/constants/Spacing';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = SCREEN_WIDTH * 0.62;
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface Service {
+  id: string;
+  label: string;
+  emoji: string;
+  color: string;
+  bg: string;
+}
+
+interface RecentOrder {
+  id: string;
+  service: string;
+  destination: string;
+  label: string;
+  icon: string;
+}
+
+interface Restaurant {
+  id: string;
+  name: string;
+  rating: string;
+  distance: string;
+  time: string;
+  category: string;
+  emoji: string;
+}
+
+// ─── Mock Data ────────────────────────────────────────────────────────────────
+
+const SERVICES: Service[] = [
+  { id: 'ride',     label: 'Ride',     emoji: '🛵', color: Colors.primary,   bg: Colors.primaryLight },
+  { id: 'car',      label: 'Car',      emoji: '🚗', color: '#2563EB',        bg: '#DBEAFE' },
+  { id: 'delivery', label: 'Delivery', emoji: '📦', color: '#D97706',        bg: '#FEF3C7' },
+  { id: 'food',     label: 'Food',     emoji: '🍜', color: '#DC2626',        bg: '#FEE2E2' },
+  { id: 'send',     label: 'Send',     emoji: '📫', color: '#059669',        bg: '#DCFCE7' },
+  { id: 'package',  label: 'Package',  emoji: '🗃️', color: '#7C3AED',       bg: '#EDE9FE' },
+  { id: 'mart',     label: 'Mart',     emoji: '🛒', color: '#0891B2',        bg: '#CFFAFE' },
+  { id: 'more',     label: 'Lainnya',  emoji: '⋯',  color: Colors.textSecondary, bg: Colors.surfaceAlt },
+];
+
+const RECENT_ORDERS: RecentOrder[] = [
+  { id: '1', service: 'Ride', destination: 'Kantor', label: 'Jl. Sudirman No.10', icon: '🛵' },
+  { id: '2', service: 'Food', destination: 'Rumah',  label: 'Jl. Merdeka 5',      icon: '🍜' },
+];
+
+const RESTAURANTS: Restaurant[] = [
+  { id: '1', name: 'Warung Nasi Goreng', rating: '4.9', distance: '1.2 km', time: '20-30 min', category: 'Nasi', emoji: '🍳' },
+  { id: '2', name: 'Mie Ayam Pak Joko',  rating: '4.7', distance: '0.8 km', time: '15-25 min', category: 'Mie',  emoji: '🍝' },
+  { id: '3', name: 'Soto Betawi Bu Sari', rating: '4.8', distance: '2.1 km', time: '25-35 min', category: 'Soto', emoji: '🥘' },
+];
+
+// ─── Sub-components (memoised) ────────────────────────────────────────────────
+
+const ServiceItem = React.memo(function ServiceItem({ item }: { item: Service }) {
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  return (
+    <Animated.View style={animStyle}>
+      <Pressable
+        style={styles.serviceItem}
+        onPressIn={() => { scale.value = withTiming(0.93, { duration: 90 }); }}
+        onPressOut={() => { scale.value = withTiming(1, { duration: 120 }); }}
+        accessibilityRole="button"
+        accessibilityLabel={`${item.label}, tombol`}
+        hitSlop={HIT_SLOP}
+      >
+        <View style={[styles.serviceIcon, { backgroundColor: item.bg }]}>
+          <Text style={styles.serviceEmoji}>{item.emoji}</Text>
+        </View>
+        <Text style={styles.serviceLabel}>{item.label}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+});
+
+const RestaurantCard = React.memo(function RestaurantCard({ item }: { item: Restaurant }) {
+  return (
+    <Card
+      style={styles.restaurantCard}
+      onPress={() => {}}
+      accessibilityLabel={`${item.name}, rating ${item.rating}, ${item.distance}`}
+    >
+      {/* Emoji illustration */}
+      <View style={styles.restaurantImgPlaceholder}>
+        <Text style={styles.restaurantEmoji}>{item.emoji}</Text>
+      </View>
+
+      <View style={styles.restaurantInfo}>
+        <Text style={styles.restaurantName} numberOfLines={1}>{item.name}</Text>
+
+        <View style={styles.restaurantMeta}>
+          <Star size={12} color={Colors.ratingStar} fill={Colors.ratingStar} strokeWidth={0} />
+          <Text style={styles.restaurantMetaText}>{item.rating}</Text>
+          <Text style={styles.restaurantDot}>·</Text>
+          <MapPin size={12} color={Colors.textHint} strokeWidth={2} />
+          <Text style={styles.restaurantMetaText}>{item.distance}</Text>
+          <Text style={styles.restaurantDot}>·</Text>
+          <Clock size={12} color={Colors.textHint} strokeWidth={2} />
+          <Text style={styles.restaurantMetaText}>{item.time}</Text>
+        </View>
+
+        <Badge label={item.category} variant="brand" />
+      </View>
+    </Card>
+  );
+});
+
+// ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const renderService = useCallback(
+    ({ item }: ListRenderItemInfo<Service>) => <ServiceItem item={item} />,
+    []
+  );
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const renderRestaurant = useCallback(
+    ({ item }: ListRenderItemInfo<Restaurant>) => <RestaurantCard item={item} />,
+    []
+  );
+
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ── Header ── */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.greeting}>Hai, Andi 👋</Text>
+            <Text style={styles.tagline}>Mau ke mana hari ini?</Text>
+          </View>
+
+          <View style={styles.headerActions}>
+            <Pressable
+              style={styles.headerBtn}
+              hitSlop={HIT_SLOP}
+              accessibilityRole="button"
+              accessibilityLabel="Notifikasi"
+            >
+              <Bell size={22} color={Colors.textPrimary} strokeWidth={2} />
+            </Pressable>
+            <Pressable
+              style={styles.headerBtn}
+              hitSlop={HIT_SLOP}
+              accessibilityRole="button"
+              accessibilityLabel="Scan QR"
+            >
+              <QrCode size={22} color={Colors.textPrimary} strokeWidth={2} />
+            </Pressable>
+          </View>
+        </View>
+
+        {/* ── Search bar ── */}
+        <Pressable
+          style={styles.searchBar}
+          accessibilityRole="search"
+          accessibilityLabel="Cari tujuan"
+          onPress={() => {}}
+        >
+          <Search size={18} color={Colors.textHint} strokeWidth={2} />
+          <Text style={styles.searchText}>Cari tujuan...</Text>
+        </Pressable>
+
+        {/* ── DELIVRY brand banner ── */}
+        <LinearGradient
+          colors={[Colors.primary, Colors.primaryDark]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.brandBanner}
+        >
+          <View style={styles.brandBannerLeft}>
+            <Text style={styles.brandBannerBadge}>🎉 DISKON 20%</Text>
+            <Text style={styles.brandBannerTitle}>Untuk semua{'\n'}layanan</Text>
+            <Text style={styles.brandBannerSub}>Pakai kode: MOVE20</Text>
+          </View>
+          <Text style={styles.brandBannerEmoji}>🛵</Text>
+        </LinearGradient>
+
+        {/* ── Service Grid ── */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Layanan kami</Text>
+          <Pressable hitSlop={HIT_SLOP} accessibilityRole="button" accessibilityLabel="Lihat semua layanan">
+            <Text style={styles.sectionLink}>Lihat semua</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.serviceGrid}>
+          {SERVICES.map((item) => (
+            <ServiceItem key={item.id} item={item} />
+          ))}
+        </View>
+
+        {/* ── Promo carousel ── */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Promo untukmu</Text>
+          <Pressable hitSlop={HIT_SLOP} accessibilityRole="button" accessibilityLabel="Lihat semua promo">
+            <Text style={styles.sectionLink}>Lihat semua</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.promoContainer}>
+          <LinearGradient
+            colors={['#6C2BD9', '#4C1FA8']}
+            start={{ x: 0.1, y: 0 }}
+            end={{ x: 0.9, y: 1 }}
+            style={styles.promoCard}
+          >
+            <View>
+              <Text style={styles.promoLabel}>Gratis Ongkir</Text>
+              <Text style={styles.promoTitle}>Order Food{'\n'}pertamamu</Text>
+            </View>
+            <Text style={styles.promoEmoji}>🍜</Text>
+          </LinearGradient>
+
+          <LinearGradient
+            colors={['#D97706', '#B45309']}
+            start={{ x: 0.1, y: 0 }}
+            end={{ x: 0.9, y: 1 }}
+            style={styles.promoCard}
+          >
+            <View>
+              <Text style={styles.promoLabel}>Hemat 15%</Text>
+              <Text style={styles.promoTitle}>Ride ke{'\n'}kantormu</Text>
+            </View>
+            <Text style={styles.promoEmoji}>🛵</Text>
+          </LinearGradient>
+        </View>
+
+        {/* ── Recent orders ── */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Terakhir dipesan</Text>
+        </View>
+
+        <View style={styles.recentList}>
+          {RECENT_ORDERS.map((order) => (
+            <Card
+              key={order.id}
+              onPress={() => {}}
+              style={styles.recentCard}
+              accessibilityLabel={`${order.service} ke ${order.destination}`}
+            >
+              <View style={[styles.recentIcon, { backgroundColor: Colors.primaryLight }]}>
+                <Text style={styles.recentEmoji}>{order.icon}</Text>
+              </View>
+              <View style={styles.recentInfo}>
+                <Text style={styles.recentService}>{order.service}</Text>
+                <Text style={styles.recentDest} numberOfLines={1}>{order.label}</Text>
+              </View>
+              <ChevronRight size={18} color={Colors.textHint} strokeWidth={2} />
+            </Card>
+          ))}
+        </View>
+
+        {/* ── Nearby restaurants ── */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Restoran terdekat</Text>
+          <Pressable hitSlop={HIT_SLOP} accessibilityRole="button" accessibilityLabel="Lihat semua restoran">
+            <Text style={styles.sectionLink}>Lihat semua</Text>
+          </Pressable>
+        </View>
+
+        <FlatList
+          data={RESTAURANTS}
+          renderItem={renderRestaurant}
+          keyExtractor={(r) => r.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.restaurantList}
+          ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+          scrollEventThrottle={16}
+          removeClippedSubviews
+          getItemLayout={(_, index) => ({
+            length: CARD_WIDTH + 12,
+            offset: (CARD_WIDTH + 12) * index,
+            index,
+          })}
+        />
+
+        <View style={styles.bottomPad} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
-  titleContainer: {
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.white,
+  },
+  scroll: {
+    flex: 1,
+    backgroundColor: Colors.white,
+  },
+  content: {
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.base,
+  },
+
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+  },
+  greeting: {
+    fontFamily: FontFamily.regular,
+    fontSize: FontSize.body,
+    color: Colors.textSecondary,
+    marginBottom: 2,
+  },
+  tagline: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.h3,
+    color: Colors.textPrimary,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  headerBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.surfaceAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Search
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
+    marginHorizontal: Spacing.base,
+    marginVertical: Spacing.sm,
+    height: 48,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.surfaceAlt,
+    paddingHorizontal: Spacing.base,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  searchText: {
+    fontFamily: FontFamily.regular,
+    fontSize: FontSize.bodyLarge,
+    color: Colors.textHint,
+    flex: 1,
+    includeFontPadding: false,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+
+  // Brand banner
+  brandBanner: {
+    marginHorizontal: Spacing.base,
+    borderRadius: Radius.lg,
+    padding: Spacing.base,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.lg,
+    minHeight: 110,
   },
+  brandBannerLeft: {
+    gap: 4,
+  },
+  brandBannerBadge: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.caption,
+    color: Colors.primaryLight,
+  },
+  brandBannerTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.h3,
+    color: Colors.white,
+    lineHeight: 26,
+  },
+  brandBannerSub: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.caption,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 4,
+  },
+  brandBannerEmoji: {
+    fontSize: 64,
+  },
+
+  // Section header
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    marginBottom: Spacing.md,
+    marginTop: Spacing.sm,
+  },
+  sectionTitle: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.h4,
+    color: Colors.textPrimary,
+  },
+  sectionLink: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.body,
+    color: Colors.primary,
+  },
+
+  // Service grid (4 columns)
+  serviceGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: Spacing.base,
+    marginBottom: Spacing.sm,
+  },
+  serviceItem: {
+    width: (SCREEN_WIDTH - Spacing.base * 2) / 4,
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    gap: 6,
+  },
+  serviceIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  serviceEmoji: {
+    fontSize: 24,
+  },
+  serviceLabel: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.caption,
+    color: Colors.textPrimary,
+    textAlign: 'center',
+  },
+
+  // Promo cards
+  promoContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: Spacing.base,
+    gap: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  promoCard: {
+    flex: 1,
+    borderRadius: Radius.lg,
+    padding: Spacing.base,
+    minHeight: 120,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  promoLabel: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.caption,
+    color: 'rgba(255,255,255,0.8)',
+    marginBottom: 4,
+  },
+  promoTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.body,
+    color: Colors.white,
+    lineHeight: 22,
+  },
+  promoEmoji: {
+    fontSize: 40,
+  },
+
+  // Recent orders
+  recentList: {
+    paddingHorizontal: Spacing.base,
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  recentCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    padding: Spacing.md,
+  },
+  recentIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recentEmoji: {
+    fontSize: 22,
+  },
+  recentInfo: {
+    flex: 1,
+  },
+  recentService: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.body,
+    color: Colors.textPrimary,
+  },
+  recentDest: {
+    fontFamily: FontFamily.regular,
+    fontSize: FontSize.caption,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+
+  // Restaurant cards
+  restaurantList: {
+    paddingHorizontal: Spacing.base,
+    marginBottom: Spacing.sm,
+  },
+  restaurantCard: {
+    width: CARD_WIDTH,
+    padding: 0,
+    overflow: 'hidden',
+  },
+  restaurantImgPlaceholder: {
+    height: 120,
+    backgroundColor: Colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  restaurantEmoji: {
+    fontSize: 52,
+  },
+  restaurantInfo: {
+    padding: Spacing.md,
+    gap: 6,
+  },
+  restaurantName: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.body,
+    color: Colors.textPrimary,
+  },
+  restaurantMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  restaurantMetaText: {
+    fontFamily: FontFamily.regular,
+    fontSize: FontSize.caption,
+    color: Colors.textSecondary,
+    includeFontPadding: false,
+  },
+  restaurantDot: {
+    color: Colors.textHint,
+    fontSize: FontSize.caption,
+  },
+
+  bottomPad: { height: 20 },
 });
