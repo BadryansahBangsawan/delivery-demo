@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
+import { updateProfile, useStore } from '@/store';
 
 export default function EditProfileScreen() {
-  const [name, setName] = useState('Andi Rahman');
-  const [email, setEmail] = useState('andi@email.com');
+  const { userName, userEmail } = useStore();
+  const [name, setName] = useState(userName);
+  const [email, setEmail] = useState(userEmail);
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
@@ -45,7 +47,7 @@ export default function EditProfileScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Button label="Simpan" onPress={() => router.back()} />
+        <Button label="Simpan" onPress={() => { updateProfile(name.trim() || userName, email.trim() || userEmail); router.back(); }} />
       </View>
     </SafeAreaView>
   );

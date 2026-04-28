@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Send } from '@/components/ui/TailwindIcon';
 
 import { Colors } from '@/constants/Colors';
-import { chatMessages, chatThreads } from '@/constants/MockData';
+import { chatMessages, chatThreads, type ChatMessage } from '@/constants/MockData';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
 
@@ -14,13 +14,46 @@ const quickReplies = ['Saya di depan', 'Mohon tunggu 2 menit', 'Terima kasih'];
 export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{ chatId: string }>();
   const [message, setMessage] = useState('');
+  const listRef = useRef<FlatList<ChatMessage>>(null);
 
   const thread = useMemo(
     () => chatThreads.find((item) => item.id === chatId) ?? chatThreads[0],
     [chatId]
   );
 
-  const messages = useMemo(() => chatMessages[thread.id] ?? [], [thread.id]);
+  // Local copy of messages — starts from mock, grows with user sends
+  const [messages, setMessages] = useState<ChatMessage[]>(
+    () => chatMessages[thread.id] ?? []
+  );
+
+  function sendMessage(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    const newMsg: ChatMessage = {
+      id: `local-${Date.now()}`,
+      from: 'me',
+      text: trimmed,
+      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    };
+    setMessages((prev) => [...prev, newMsg]);
+    setMessage('');
+    // Scroll to end after state update
+    setTimeout(() => {
+      listRef.current?.scrollToEnd({ animated: true });
+    }, 50);
+  }
+
+  const renderItem = useCallback(({ item }: { item: ChatMessage }) => {
+    const fromMe = item.from === 'me';
+    return (
+      <View style={[styles.bubbleWrap, fromMe ? styles.bubbleWrapMe : styles.bubbleWrapOther]}>
+        <View style={[styles.bubble, fromMe ? styles.bubbleMe : styles.bubbleOther]}>
+          <Text style={[styles.bubbleText, fromMe && styles.bubbleTextMe]}>{item.text}</Text>
+          <Text style={[styles.bubbleTime, fromMe && styles.bubbleTimeMe]}>{item.time}</Text>
+        </View>
+      </View>
+    );
+  }, []);
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
@@ -36,24 +69,20 @@ export default function ChatRoomScreen() {
       </View>
 
       <FlatList
+        ref={listRef}
         data={messages}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.messageList}
-        renderItem={({ item }) => {
-          const fromMe = item.from === 'me';
-          return (
-            <View style={[styles.bubbleWrap, fromMe ? styles.bubbleWrapMe : styles.bubbleWrapOther]}>
-              <View style={[styles.bubble, fromMe ? styles.bubbleMe : styles.bubbleOther]}>
-                <Text style={[styles.bubbleText, fromMe && styles.bubbleTextMe]}>{item.text}</Text>
-                <Text style={[styles.bubbleTime, fromMe && styles.bubbleTimeMe]}>{item.time}</Text>
-              </View>
-            </View>
-          );
-        }}
+        renderItem={renderItem}
+        onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
         ListFooterComponent={
           <View style={styles.quickRow}>
             {quickReplies.map((reply) => (
-              <Pressable key={reply} style={styles.quickChip} onPress={() => setMessage(reply)}>
+              <Pressable
+                key={reply}
+                style={styles.quickChip}
+                onPress={() => sendMessage(reply)}
+              >
                 <Text style={styles.quickChipText}>{reply}</Text>
               </Pressable>
             ))}
@@ -68,8 +97,17 @@ export default function ChatRoomScreen() {
           onChangeText={setMessage}
           placeholder="Tulis pesan..."
           placeholderTextColor={Colors.textHint}
+          onSubmitEditing={() => sendMessage(message)}
+          returnKeyType="send"
+          multiline={false}
         />
-        <Pressable style={styles.sendBtn}>
+        <Pressable
+          style={[styles.sendBtn, !message.trim() && styles.sendBtnDisabled]}
+          onPress={() => sendMessage(message)}
+          disabled={!message.trim()}
+          accessibilityRole="button"
+          accessibilityLabel="Kirim pesan"
+        >
           <Send size={18} color={Colors.white} strokeWidth={2.2} />
         </Pressable>
       </View>
@@ -206,5 +244,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sendBtnDisabled: {
+    backgroundColor: Colors.textHint,
   },
 });

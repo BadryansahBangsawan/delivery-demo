@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Plus, Star } from '@/components/ui/TailwindIcon';
+import { ArrowLeft, Minus, Plus, Star } from '@/components/ui/TailwindIcon';
 
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
@@ -11,9 +11,11 @@ import { restaurants, restaurantMenus } from '@/constants/MockData';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { formatIDR } from '@/utils/currency';
+import { useStore, addToCart, removeFromCart, cartTotal, cartItemCount } from '@/store';
 
 export default function RestaurantDetailScreen() {
   const { restaurantId } = useLocalSearchParams<{ restaurantId: string }>();
+  const { cart } = useStore();
 
   const restaurant = useMemo(
     () => restaurants.find((item) => item.id === restaurantId) ?? restaurants[0],
@@ -21,6 +23,13 @@ export default function RestaurantDetailScreen() {
   );
 
   const menus = restaurantMenus[restaurant.id] ?? [];
+
+  const totalInCart = cartTotal(cart);
+  const countInCart = cartItemCount(cart);
+
+  function getQtyInCart(menuId: string): number {
+    return cart.find((c) => c.menuId === menuId)?.qty ?? 0;
+  }
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
@@ -59,28 +68,87 @@ export default function RestaurantDetailScreen() {
               <Badge label={restaurant.category} variant="brand" />
             </View>
 
-            <Text style={styles.sectionTitle}>Menu Populer</Text>
+            <Text style={styles.sectionTitle}>Menu</Text>
           </>
         }
-        renderItem={({ item }) => (
-          <Card style={styles.menuCard} onPress={() => {}}>
-            <View style={styles.menuInfo}>
-              <Text style={styles.menuName}>{item.name}</Text>
-              <Text style={styles.menuPrice}>{formatIDR(item.price)}</Text>
-            </View>
+        renderItem={({ item }) => {
+          const qty = getQtyInCart(item.id);
 
-            <Pressable style={styles.addBtn} onPress={() => router.push('/food/cart')}>
-              <Plus size={16} color={Colors.primary} strokeWidth={2.5} />
-            </Pressable>
-          </Card>
-        )}
+          return (
+            <Card style={styles.menuCard}>
+              <View style={styles.menuInfo}>
+                <Text style={styles.menuName}>{item.name}</Text>
+                <Text style={styles.menuPrice}>{formatIDR(item.price)}</Text>
+                {item.popular && <Badge label="Populer" variant="warning" />}
+              </View>
+
+              {qty === 0 ? (
+                <Pressable
+                  style={styles.addBtn}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Tambah ${item.name}`}
+                  onPress={() =>
+                    addToCart({
+                      menuId: item.id,
+                      menuName: item.name,
+                      price: item.price,
+                      restaurantId: restaurant.id,
+                      restaurantName: restaurant.name,
+                    })
+                  }
+                >
+                  <Plus size={16} color={Colors.primary} strokeWidth={2.5} />
+                </Pressable>
+              ) : (
+                <View style={styles.qtyRow}>
+                  <Pressable
+                    style={styles.qtyBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Kurangi ${item.name}`}
+                    onPress={() => removeFromCart(item.id)}
+                  >
+                    <Minus size={14} color={Colors.primary} strokeWidth={2.5} />
+                  </Pressable>
+                  <Text style={styles.qtyText}>{qty}</Text>
+                  <Pressable
+                    style={styles.qtyBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Tambah ${item.name}`}
+                    onPress={() =>
+                      addToCart({
+                        menuId: item.id,
+                        menuName: item.name,
+                        price: item.price,
+                        restaurantId: restaurant.id,
+                        restaurantName: restaurant.name,
+                      })
+                    }
+                  >
+                    <Plus size={14} color={Colors.primary} strokeWidth={2.5} />
+                  </Pressable>
+                </View>
+              )}
+            </Card>
+          );
+        }}
       />
 
-      <View style={styles.floatingCart}>
-        <Pressable onPress={() => router.push('/food/cart')} style={styles.cartBtn}>
-          <Text style={styles.cartText}>Keranjang: 2 item • {formatIDR(43000)}</Text>
-        </Pressable>
-      </View>
+      {countInCart > 0 && (
+        <View style={styles.floatingCart}>
+          <Pressable
+            onPress={() => router.push('/food/cart')}
+            style={styles.cartBtn}
+            accessibilityRole="button"
+            accessibilityLabel={`Lihat keranjang, ${countInCart} item`}
+          >
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{countInCart}</Text>
+            </View>
+            <Text style={styles.cartText}>Lihat Keranjang</Text>
+            <Text style={styles.cartTotal}>{formatIDR(totalInCart)}</Text>
+          </Pressable>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -168,6 +236,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: Spacing.sm,
   },
   menuInfo: {
     flex: 1,
@@ -193,6 +262,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Colors.primary50,
   },
+  qtyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  qtyBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primary50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qtyText: {
+    minWidth: 18,
+    textAlign: 'center',
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.body,
+    color: Colors.textPrimary,
+  },
   floatingCart: {
     position: 'absolute',
     left: Spacing.base,
@@ -203,12 +294,32 @@ const styles = StyleSheet.create({
     minHeight: 52,
     borderRadius: Radius.md,
     backgroundColor: Colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    gap: Spacing.sm,
+  },
+  cartBadge: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: 'rgba(255,255,255,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.base,
+  },
+  cartBadgeText: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.caption,
+    color: Colors.white,
   },
   cartText: {
+    flex: 1,
     fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.body,
+    color: Colors.white,
+  },
+  cartTotal: {
+    fontFamily: FontFamily.bold,
     fontSize: FontSize.body,
     color: Colors.white,
   },

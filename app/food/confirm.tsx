@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -9,8 +10,24 @@ import { Colors } from '@/constants/Colors';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { formatIDR } from '@/utils/currency';
+import { useStore, cartTotal, clearCart, deductWallet } from '@/store';
+
+const DELIVERY_FEE = 8000;
 
 export default function FoodConfirmScreen() {
+  const { cart, walletBalance } = useStore();
+  const subtotal = useMemo(() => cartTotal(cart), [cart]);
+  const total = subtotal + DELIVERY_FEE;
+
+  const restaurantName = cart[0]?.restaurantName ?? 'Restoran';
+  const canAfford = walletBalance >= total;
+
+  function handleConfirm() {
+    deductWallet(total);
+    clearCart();
+    router.replace('/food/tracking');
+  }
+
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
       <View style={styles.header}>
@@ -23,14 +40,19 @@ export default function FoodConfirmScreen() {
 
       <View style={styles.content}>
         <Card style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Alamat</Text>
+          <Text style={styles.sectionLabel}>Restoran</Text>
+          <Text style={styles.sectionText}>{restaurantName}</Text>
+        </Card>
+
+        <Card style={styles.sectionCard}>
+          <Text style={styles.sectionLabel}>Alamat</Text>
           <Text style={styles.sectionText}>Rumah • Jl. Merdeka No. 5</Text>
         </Card>
 
         <Card style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Metode pembayaran</Text>
+          <Text style={styles.sectionLabel}>Metode pembayaran</Text>
           <View style={styles.paymentRow}>
-            <Text style={styles.sectionText}>Cash</Text>
+            <Text style={styles.sectionText}>DELIVRY Pay • {formatIDR(walletBalance)}</Text>
             <ChevronDown size={16} color={Colors.textHint} strokeWidth={2} />
           </View>
         </Card>
@@ -38,22 +60,32 @@ export default function FoodConfirmScreen() {
         <Card style={styles.summaryCard}>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal</Text>
-            <Text style={styles.summaryValue}>{formatIDR(43000)}</Text>
+            <Text style={styles.summaryValue}>{formatIDR(subtotal)}</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Ongkir</Text>
-            <Text style={styles.summaryValue}>{formatIDR(8000)}</Text>
+            <Text style={styles.summaryValue}>{formatIDR(DELIVERY_FEE)}</Text>
           </View>
           <View style={styles.summaryDivider} />
           <View style={styles.summaryRow}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>{formatIDR(51000)}</Text>
+            <Text style={styles.totalValue}>{formatIDR(total)}</Text>
           </View>
         </Card>
+
+        {!canAfford && (
+          <Text style={styles.insufficientText}>
+            Saldo DELIVRY Pay tidak cukup. Top up terlebih dahulu.
+          </Text>
+        )}
       </View>
 
       <View style={styles.footer}>
-        <Button label="Pesan Sekarang" onPress={() => router.replace('/food/tracking')} />
+        {canAfford ? (
+          <Button label={`Pesan Sekarang • ${formatIDR(total)}`} onPress={handleConfirm} />
+        ) : (
+          <Button label="Top Up Saldo" onPress={() => router.push('/wallet/topup')} />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -96,9 +128,9 @@ const styles = StyleSheet.create({
   },
   sectionCard: {
     padding: Spacing.md,
-    gap: 6,
+    gap: 4,
   },
-  sectionTitle: {
+  sectionLabel: {
     fontFamily: FontFamily.medium,
     fontSize: FontSize.caption,
     color: Colors.textHint,
@@ -145,6 +177,12 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: FontSize.bodyLarge,
     color: Colors.primary,
+  },
+  insufficientText: {
+    fontFamily: FontFamily.regular,
+    fontSize: FontSize.body,
+    color: Colors.error,
+    textAlign: 'center',
   },
   footer: {
     padding: Spacing.base,

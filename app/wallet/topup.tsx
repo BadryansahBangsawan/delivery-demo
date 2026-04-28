@@ -10,6 +10,7 @@ import { Colors } from '@/constants/Colors';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { formatIDR } from '@/utils/currency';
+import { topUp } from '@/store';
 
 const quickAmounts = [50000, 100000, 200000, 500000];
 
@@ -19,6 +20,7 @@ export default function TopUpScreen() {
   const numeric = Number(amount.replace(/[^0-9]/g, '')) || 0;
 
   function submitTopUp() {
+    topUp(numeric);
     router.replace('/(tabs)/dompet');
   }
 

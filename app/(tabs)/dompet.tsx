@@ -12,8 +12,11 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { formatIDR } from '@/utils/currency';
 import { walletTransactions } from '@/constants/MockData';
+import { useStore } from '@/store';
 
 export default function DompetScreen() {
+  const { walletBalance } = useStore();
+
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
       <View style={styles.header}>
@@ -31,7 +34,7 @@ export default function DompetScreen() {
           style={styles.balanceCard}
         >
           <Text style={styles.balanceLabel}>Saldo kamu</Text>
-          <Text style={styles.balanceAmount}>{formatIDR(150000)}</Text>
+          <Text style={styles.balanceAmount}>{formatIDR(walletBalance)}</Text>
           <View style={styles.balanceActions}>
             <Button label="Top Up" variant="secondary" size="sm" fullWidth={false} onPress={() => router.push('/wallet/topup')} />
             <Button label="Transfer" variant="secondary" size="sm" fullWidth={false} />

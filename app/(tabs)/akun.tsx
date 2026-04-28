@@ -7,6 +7,7 @@ import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Spacing, Radius } from '@/constants/Spacing';
 import { Avatar } from '@/components/ui/Avatar';
+import { useStore } from '@/store';
 
 const MENU_ITEMS = [
   { id: 'address', icon: MapPin, label: 'Alamat tersimpan', sub: 'Rumah, kantor, favorit', to: '/profile/addresses' as const },
@@ -17,14 +18,16 @@ const MENU_ITEMS = [
 ];
 
 export default function AkunScreen() {
+  const { userName, userPhone } = useStore();
+
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.profileSection}>
-          <Avatar name="Andi Rahman" size="lg" />
+          <Avatar name={userName} size="lg" />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Andi Rahman</Text>
-            <Text style={styles.profilePhone}>+62 812 3456 7890</Text>
+            <Text style={styles.profileName}>{userName}</Text>
+            <Text style={styles.profilePhone}>{userPhone}</Text>
           </View>
           <Pressable
             style={styles.editBtn}

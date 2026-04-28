@@ -13,6 +13,7 @@ import { rideOptions } from '@/constants/MockData';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { formatIDR } from '@/utils/currency';
+import { useStore } from '@/store';
 
 const iconById = {
   ride: Bike,
@@ -24,6 +25,7 @@ const JAKARTA_COORDINATES = [-6.2088, 106.8456] as const;
 export default function ChooseRideScreen() {
   const params = useLocalSearchParams<{ pickup?: string; destination?: string }>();
   const [selectedRide, setSelectedRide] = useState(rideOptions[0].id);
+  const { walletBalance } = useStore();
 
   const currentRide = useMemo(
     () => rideOptions.find((item) => item.id === selectedRide) ?? rideOptions[0],
@@ -111,7 +113,7 @@ export default function ChooseRideScreen() {
             </View>
             <View>
               <Text style={styles.paymentTitle}>DELIVRY Pay</Text>
-              <Text style={styles.paymentSub}>Saldo: {formatIDR(120000)}</Text>
+              <Text style={styles.paymentSub}>Saldo: {formatIDR(walletBalance)}</Text>
             </View>
           </View>
           <ChevronRight size={18} color={Colors.textHint} strokeWidth={2} />

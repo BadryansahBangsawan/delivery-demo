@@ -11,6 +11,7 @@ import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { formatIDR } from '@/utils/currency';
+import { deductWallet } from '@/store';
 
 const tips = [0, 5000, 10000, 20000];
 
@@ -130,7 +131,7 @@ export default function RideCompleteScreen() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button label="Selesai" onPress={() => router.replace('/(tabs)/pesanan')} />
+        <Button label="Selesai" onPress={() => { deductWallet(total); router.replace('/(tabs)/pesanan'); }} />
       </View>
     </SafeAreaView>
   );

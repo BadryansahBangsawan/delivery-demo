@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ArrowLeft, Minus, Plus } from '@/components/ui/TailwindIcon';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -10,34 +11,33 @@ import { Colors } from '@/constants/Colors';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { formatIDR } from '@/utils/currency';
+import { useStore, addToCart, removeFromCart, cartTotal } from '@/store';
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  qty: number;
-}
-
-const initialItems: CartItem[] = [
-  { id: '1', name: 'Mie Ayam Bakso', price: 22000, qty: 1 },
-  { id: '2', name: 'Pangsit Goreng', price: 12000, qty: 1 },
-];
+const DELIVERY_FEE = 8000;
 
 export default function CartScreen() {
-  const [items, setItems] = useState(initialItems);
+  const { cart } = useStore();
   const [note, setNote] = useState('');
 
-  const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.price * item.qty, 0), [items]);
-  const deliveryFee = 8000;
-  const total = subtotal + deliveryFee;
+  const subtotal = useMemo(() => cartTotal(cart), [cart]);
+  const total = subtotal + DELIVERY_FEE;
 
-  function updateQty(id: string, delta: number) {
-    setItems((prev) =>
-      prev
-        .map((item) =>
-          item.id === id ? { ...item, qty: Math.max(0, item.qty + delta) } : item
-        )
-        .filter((item) => item.qty > 0)
+  if (cart.length === 0) {
+    return (
+      <SafeAreaView style={styles.root} edges={['top']}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+            <ArrowLeft size={20} color={Colors.textPrimary} strokeWidth={2.2} />
+          </Pressable>
+          <Text style={styles.headerTitle}>Pesanan Kamu</Text>
+          <View style={styles.headerGap} />
+        </View>
+        <View style={styles.emptyWrap}>
+          <Text style={styles.emptyTitle}>Keranjang kosong</Text>
+          <Text style={styles.emptySub}>Tambahkan menu dari restoran</Text>
+          <Button label="Cari Makanan" onPress={() => router.replace('/food')} style={styles.emptyBtn} fullWidth={false} />
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -52,21 +52,41 @@ export default function CartScreen() {
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <Text style={styles.restaurantName}>{cart[0].restaurantName}</Text>
+
         <View style={styles.itemList}>
-          {items.map((item) => (
-            <Card key={item.id} style={styles.itemCard}>
+          {cart.map((item) => (
+            <Card key={item.menuId} style={styles.itemCard}>
               <View style={styles.itemTop}>
                 <View style={styles.itemInfo}>
-                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemName}>{item.menuName}</Text>
                   <Text style={styles.itemPrice}>{formatIDR(item.price)}</Text>
                 </View>
 
                 <View style={styles.qtyRow}>
-                  <Pressable style={styles.qtyBtn} onPress={() => updateQty(item.id, -1)}>
+                  <Pressable
+                    style={styles.qtyBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Kurangi ${item.menuName}`}
+                    onPress={() => removeFromCart(item.menuId)}
+                  >
                     <Minus size={14} color={Colors.primary} strokeWidth={2.5} />
                   </Pressable>
                   <Text style={styles.qtyText}>{item.qty}</Text>
-                  <Pressable style={styles.qtyBtn} onPress={() => updateQty(item.id, 1)}>
+                  <Pressable
+                    style={styles.qtyBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Tambah ${item.menuName}`}
+                    onPress={() =>
+                      addToCart({
+                        menuId: item.menuId,
+                        menuName: item.menuName,
+                        price: item.price,
+                        restaurantId: item.restaurantId,
+                        restaurantName: item.restaurantName,
+                      })
+                    }
+                  >
                     <Plus size={14} color={Colors.primary} strokeWidth={2.5} />
                   </Pressable>
                 </View>
@@ -98,7 +118,7 @@ export default function CartScreen() {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Ongkir</Text>
-            <Text style={styles.summaryValue}>{formatIDR(deliveryFee)}</Text>
+            <Text style={styles.summaryValue}>{formatIDR(DELIVERY_FEE)}</Text>
           </View>
           <View style={styles.summaryDivider} />
           <View style={styles.summaryRow}>
@@ -109,7 +129,10 @@ export default function CartScreen() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button label="Pesan Sekarang" onPress={() => router.push('/food/confirm')} disabled={items.length === 0} />
+        <Button
+          label={`Pesan Sekarang • ${formatIDR(total)}`}
+          onPress={() => router.push('/food/confirm')}
+        />
       </View>
     </SafeAreaView>
   );
@@ -145,6 +168,27 @@ const styles = StyleSheet.create({
   headerGap: {
     width: 40,
   },
+  emptyWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    padding: Spacing.base,
+  },
+  emptyTitle: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.h4,
+    color: Colors.textPrimary,
+  },
+  emptySub: {
+    fontFamily: FontFamily.regular,
+    fontSize: FontSize.body,
+    color: Colors.textSecondary,
+  },
+  emptyBtn: {
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing['2xl'],
+  },
   scroll: {
     flex: 1,
   },
@@ -152,6 +196,11 @@ const styles = StyleSheet.create({
     padding: Spacing.base,
     gap: Spacing.md,
     paddingBottom: Spacing['3xl'],
+  },
+  restaurantName: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.bodyLarge,
+    color: Colors.textPrimary,
   },
   itemList: {
     gap: Spacing.sm,
