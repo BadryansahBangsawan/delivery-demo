@@ -14,7 +14,6 @@ import {
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withTiming,
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';

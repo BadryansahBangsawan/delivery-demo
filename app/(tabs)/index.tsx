@@ -29,14 +29,6 @@ import {
   Bell,
   QrCode,
   Search,
-  Bike,
-  Car,
-  Package,
-  UtensilsCrossed,
-  Send,
-  Box,
-  ShoppingCart,
-  MoreHorizontal,
   Star,
   Clock,
   MapPin,
@@ -64,7 +56,6 @@ interface Service {
   id: string;
   label: string;
   emoji: string;
-  color: string;
   bg: string;
 }
 
@@ -89,14 +80,14 @@ interface Restaurant {
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const SERVICES: Service[] = [
-  { id: 'ride',     label: 'Ride',     emoji: '🛵', color: Colors.primary,   bg: Colors.primaryLight },
-  { id: 'car',      label: 'Car',      emoji: '🚗', color: '#2563EB',        bg: '#DBEAFE' },
-  { id: 'delivery', label: 'Delivery', emoji: '📦', color: '#D97706',        bg: '#FEF3C7' },
-  { id: 'food',     label: 'Food',     emoji: '🍜', color: '#DC2626',        bg: '#FEE2E2' },
-  { id: 'send',     label: 'Send',     emoji: '📫', color: '#059669',        bg: '#DCFCE7' },
-  { id: 'package',  label: 'Package',  emoji: '🗃️', color: '#7C3AED',       bg: '#EDE9FE' },
-  { id: 'mart',     label: 'Mart',     emoji: '🛒', color: '#0891B2',        bg: '#CFFAFE' },
-  { id: 'more',     label: 'Lainnya',  emoji: '⋯',  color: Colors.textSecondary, bg: Colors.surfaceAlt },
+  { id: 'ride',     label: 'Ride',     emoji: '🛵', bg: Colors.primaryLight },
+  { id: 'car',      label: 'Car',      emoji: '🚗', bg: '#DBEAFE' },
+  { id: 'delivery', label: 'Delivery', emoji: '📦', bg: '#FEF3C7' },
+  { id: 'food',     label: 'Food',     emoji: '🍜', bg: '#FEE2E2' },
+  { id: 'send',     label: 'Send',     emoji: '📫', bg: '#DCFCE7' },
+  { id: 'package',  label: 'Package',  emoji: '🗃️', bg: '#EDE9FE' },
+  { id: 'mart',     label: 'Mart',     emoji: '🛒', bg: '#CFFAFE' },
+  { id: 'more',     label: 'Lainnya',  emoji: '⋯',  bg: Colors.surfaceAlt },
 ];
 
 const RECENT_ORDERS: RecentOrder[] = [
@@ -112,7 +103,13 @@ const RESTAURANTS: Restaurant[] = [
 
 // ─── Sub-components (memoised) ────────────────────────────────────────────────
 
-const ServiceItem = React.memo(function ServiceItem({ item }: { item: Service }) {
+const ServiceItem = React.memo(function ServiceItem({
+  item,
+  onPress,
+}: {
+  item: Service;
+  onPress: () => void;
+}) {
   const scale = useSharedValue(1);
   const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
@@ -120,6 +117,7 @@ const ServiceItem = React.memo(function ServiceItem({ item }: { item: Service })
     <Animated.View style={animStyle}>
       <Pressable
         style={styles.serviceItem}
+        onPress={onPress}
         onPressIn={() => { scale.value = withTiming(0.93, { duration: 90 }); }}
         onPressOut={() => { scale.value = withTiming(1, { duration: 120 }); }}
         accessibilityRole="button"
@@ -139,7 +137,7 @@ const RestaurantCard = React.memo(function RestaurantCard({ item }: { item: Rest
   return (
     <Card
       style={styles.restaurantCard}
-      onPress={() => {}}
+      onPress={() => router.push({ pathname: '/food/[restaurantId]', params: { restaurantId: item.id } })}
       accessibilityLabel={`${item.name}, rating ${item.rating}, ${item.distance}`}
     >
       {/* Emoji illustration */}
@@ -170,10 +168,22 @@ const RestaurantCard = React.memo(function RestaurantCard({ item }: { item: Rest
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
-  const renderService = useCallback(
-    ({ item }: ListRenderItemInfo<Service>) => <ServiceItem item={item} />,
-    []
-  );
+  const handleServicePress = useCallback((serviceId: string) => {
+    if (serviceId === 'ride' || serviceId === 'car' || serviceId === 'delivery') {
+      router.push('/ride');
+      return;
+    }
+
+    if (serviceId === 'food') {
+      router.push('/food');
+      return;
+    }
+
+    if (serviceId === 'send' || serviceId === 'package') {
+      router.push('/send');
+      return;
+    }
+  }, []);
 
   const renderRestaurant = useCallback(
     ({ item }: ListRenderItemInfo<Restaurant>) => <RestaurantCard item={item} />,
@@ -219,7 +229,7 @@ export default function HomeScreen() {
           style={styles.searchBar}
           accessibilityRole="search"
           accessibilityLabel="Cari tujuan"
-          onPress={() => {}}
+          onPress={() => router.push('/ride')}
         >
           <Search size={18} color={Colors.textHint} strokeWidth={2} />
           <Text style={styles.searchText}>Cari tujuan...</Text>
@@ -250,7 +260,7 @@ export default function HomeScreen() {
 
         <View style={styles.serviceGrid}>
           {SERVICES.map((item) => (
-            <ServiceItem key={item.id} item={item} />
+            <ServiceItem key={item.id} item={item} onPress={() => handleServicePress(item.id)} />
           ))}
         </View>
 

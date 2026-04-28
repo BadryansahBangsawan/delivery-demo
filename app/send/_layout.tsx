@@ -1,0 +1,11 @@
+import { Stack } from 'expo-router';
+
+export default function SendLayout() {
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="details" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="tracking" options={{ animation: 'slide_from_right' }} />
+    </Stack>
+  );
+}

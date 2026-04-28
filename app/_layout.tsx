@@ -43,6 +43,14 @@ export default function RootLayout() {
         <Stack.Screen name="onboarding" options={{ animation: 'fade' }} />
         <Stack.Screen name="(auth)" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+
+        <Stack.Screen name="ride" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="food" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="wallet" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="activity" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="chat" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="profile" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="send" options={{ animation: 'slide_from_right' }} />
       </Stack>
       <StatusBar style="dark" backgroundColor="#FFFFFF" />
     </>

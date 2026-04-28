@@ -10,7 +10,6 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withDelay,
-  withSequence,
   runOnJS,
   Easing,
 } from 'react-native-reanimated';
@@ -65,7 +64,7 @@ export default function SplashScreen() {
         }
       })
     );
-  }, []);
+  }, [containerOpacity, logoOpacity, logoScale, taglineOpacity, taglineTranslateY]);
 
   function navigate() {
     const dest = checkAuthState();
