@@ -1,34 +1,94 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { MessageCircle, Phone, Send, Star } from '@/components/ui/TailwindIcon';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Bike, Clock3, MapPin, MessageCircle, Phone, Send, Star } from '@/components/ui/TailwindIcon';
 
+import { Avatar } from '@/components/ui/Avatar';
+import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Map, MapMarker, MapPolyline, MapTileLayer } from '@/components/ui/map';
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Radius, Spacing } from '@/constants/Spacing';
 
+const TRACKING_COORDINATES = [-6.2146, 106.8451] as const;
+const DRIVER_COORDINATES = [-6.2146, 106.8451] as const;
+const PICKUP_COORDINATES = [-6.2088, 106.8456] as const;
+const DESTINATION_COORDINATES = [-6.2243, 106.8415] as const;
+const ROUTE_COORDINATES = [
+  PICKUP_COORDINATES,
+  [-6.213, 106.8468] as const,
+  [-6.2185, 106.844] as const,
+  DESTINATION_COORDINATES,
+];
+
 export default function LiveTrackingScreen() {
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
-      <LinearGradient
-        colors={[Colors.primary50, Colors.primaryLight]}
-        style={styles.mapArea}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <Text style={styles.mapTitle}>Tracking Driver Real-time</Text>
-        <Text style={styles.mapSub}>Ahmad menuju lokasi jemputmu • 2 menit lagi</Text>
-      </LinearGradient>
+      <View style={styles.mapArea}>
+        <Map center={TRACKING_COORDINATES} zoom={14} style={styles.mapCanvas}>
+          <MapTileLayer />
+          <MapPolyline coordinates={ROUTE_COORDINATES} strokeWidth={5} />
+          <MapPolyline
+            coordinates={[DRIVER_COORDINATES, PICKUP_COORDINATES]}
+            strokeColor={Colors.info}
+            strokeWidth={3}
+            lineDashPattern={[8, 8]}
+          />
+          <MapMarker coordinate={PICKUP_COORDINATES} title="Lokasi jemput">
+            <View style={styles.pickupMarker}>
+              <MapPin size={16} color={Colors.white} strokeWidth={2.4} />
+            </View>
+          </MapMarker>
+          <MapMarker coordinate={DESTINATION_COORDINATES} title="Tujuan">
+            <View style={styles.destinationMarker}>
+              <MapPin size={16} color={Colors.white} strokeWidth={2.4} />
+            </View>
+          </MapMarker>
+          <MapMarker coordinate={DRIVER_COORDINATES} title="Ahmad">
+            <View style={styles.driverMarker}>
+              <Bike size={18} color={Colors.white} strokeWidth={2.4} />
+            </View>
+          </MapMarker>
+        </Map>
+        <View style={styles.mapBadge}>
+          <Bike size={16} color={Colors.primary} strokeWidth={2.2} />
+          <Text style={styles.mapBadgeText}>Driver mendekat</Text>
+        </View>
+        <View pointerEvents="none" style={styles.mapEtaCard}>
+          <View style={styles.etaIcon}>
+            <Clock3 size={16} color={Colors.primary} strokeWidth={2.2} />
+          </View>
+          <View style={styles.etaInfo}>
+            <Text style={styles.mapTitle}>2 menit lagi</Text>
+            <Text style={styles.mapSub}>Ahmad menuju lokasi jemputmu</Text>
+          </View>
+        </View>
+      </View>
 
       <View style={styles.bottomSheet}>
+        <View style={styles.tripSummary}>
+          <View style={styles.tripPoint}>
+            <View style={styles.tripDotPrimary} />
+            <View style={styles.tripTextWrap}>
+              <Text style={styles.tripLabel}>Jemput</Text>
+              <Text style={styles.tripValue} numberOfLines={1}>Jl. Sudirman No. 10</Text>
+            </View>
+          </View>
+          <View style={styles.tripLine} />
+          <View style={styles.tripPoint}>
+            <View style={styles.tripDotDark} />
+            <View style={styles.tripTextWrap}>
+              <Text style={styles.tripLabel}>Tujuan</Text>
+              <Text style={styles.tripValue} numberOfLines={1}>Mall Kota Kasablanka</Text>
+            </View>
+          </View>
+        </View>
+
         <Card style={styles.driverCard}>
           <View style={styles.driverTop}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>A</Text>
-            </View>
+            <Avatar name="Ahmad" size="md" />
             <View style={styles.driverInfo}>
               <Text style={styles.driverName}>Ahmad</Text>
               <Text style={styles.driverVehicle}>Honda Vario • B 1234 XY</Text>
@@ -37,31 +97,29 @@ export default function LiveTrackingScreen() {
                 <Text style={styles.ratingText}>4.9</Text>
               </View>
             </View>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>ON TRIP</Text>
-            </View>
+            <Badge label="ON TRIP" variant="success" />
           </View>
 
           <View style={styles.actionRow}>
             <Pressable
-              style={styles.actionBtn}
+              style={({ pressed }) => [styles.actionBtn, pressed && styles.actionBtnPressed]}
               onPress={() => router.push({ pathname: '/chat/[chatId]', params: { chatId: 'driver-ahmad' } })}
             >
               <MessageCircle size={18} color={Colors.primary} strokeWidth={2} />
               <Text style={styles.actionText}>Chat</Text>
             </Pressable>
 
-            <Pressable style={styles.actionBtn}>
+            <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.actionBtnPressed]}>
               <Phone size={18} color={Colors.primary} strokeWidth={2} />
               <Text style={styles.actionText}>Call</Text>
             </Pressable>
 
-            <Pressable style={styles.actionBtn}>
+            <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.actionBtnPressed]}>
               <Send size={18} color={Colors.primary} strokeWidth={2} />
               <Text style={styles.actionText}>Share</Text>
             </Pressable>
 
-            <Pressable style={[styles.actionBtn, styles.actionDanger]}>
+            <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionDanger, pressed && styles.actionBtnPressed]}>
               <Text style={styles.actionDangerText}>SOS</Text>
             </Pressable>
           </View>
@@ -80,21 +138,73 @@ const styles = StyleSheet.create({
   },
   mapArea: {
     flex: 1,
+    position: 'relative',
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.divider,
+    overflow: 'hidden',
+  },
+  mapCanvas: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 0,
+    borderWidth: 0,
+  },
+  mapBadge: {
+    position: 'absolute',
+    top: 28,
+    left: Spacing.base,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.white,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 10,
+    minHeight: 34,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.base,
+    flexDirection: 'row',
+    gap: 6,
+  },
+  mapBadgeText: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.caption,
+    color: Colors.textPrimary,
+  },
+  mapEtaCard: {
+    position: 'absolute',
+    left: Spacing.base,
+    right: Spacing.base,
+    bottom: Spacing.base,
+    minHeight: 58,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+  },
+  etaIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  etaInfo: {
+    flex: 1,
+    gap: 2,
   },
   mapTitle: {
     fontFamily: FontFamily.bold,
-    fontSize: FontSize.h3,
+    fontSize: FontSize.bodyLarge,
     color: Colors.primaryDark,
   },
   mapSub: {
-    marginTop: 4,
     fontFamily: FontFamily.regular,
-    fontSize: FontSize.body,
+    fontSize: FontSize.caption,
     color: Colors.textSecondary,
-    textAlign: 'center',
   },
   bottomSheet: {
     padding: Spacing.base,
@@ -102,6 +212,81 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: Colors.divider,
     backgroundColor: Colors.white,
+  },
+  pickupMarker: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: Colors.white,
+  },
+  destinationMarker: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: Colors.primaryDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: Colors.white,
+  },
+  driverMarker: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: Colors.info,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: Colors.white,
+  },
+  tripSummary: {
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: Spacing.md,
+    backgroundColor: Colors.white,
+  },
+  tripPoint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  tripDotPrimary: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Colors.primary,
+  },
+  tripDotDark: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Colors.primaryDark,
+  },
+  tripLine: {
+    width: 1,
+    height: 18,
+    marginLeft: 4.5,
+    marginVertical: 3,
+    backgroundColor: Colors.border,
+  },
+  tripTextWrap: {
+    flex: 1,
+    gap: 1,
+  },
+  tripLabel: {
+    fontFamily: FontFamily.regular,
+    fontSize: FontSize.caption,
+    color: Colors.textHint,
+  },
+  tripValue: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.body,
+    color: Colors.textPrimary,
   },
   driverCard: {
     padding: Spacing.md,
@@ -111,19 +296,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontFamily: FontFamily.bold,
-    fontSize: FontSize.h4,
-    color: Colors.primary,
   },
   driverInfo: {
     flex: 1,
@@ -149,17 +321,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.caption,
     color: Colors.textSecondary,
   },
-  badge: {
-    borderRadius: Radius.full,
-    backgroundColor: Colors.successLight,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  badgeText: {
-    fontFamily: FontFamily.medium,
-    fontSize: FontSize.small,
-    color: Colors.success,
-  },
   actionRow: {
     flexDirection: 'row',
     gap: Spacing.sm,
@@ -174,6 +335,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 2,
+  },
+  actionBtnPressed: {
+    transform: [{ scale: 0.97 }],
   },
   actionText: {
     fontFamily: FontFamily.medium,

@@ -3,11 +3,11 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Bike, Car, ChevronRight, MapPin, Package, Wallet } from '@/components/ui/TailwindIcon';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { Map, MapTileLayer } from '@/components/ui/map';
 import { Colors } from '@/constants/Colors';
 import { rideOptions } from '@/constants/MockData';
 import { Radius, Spacing } from '@/constants/Spacing';
@@ -19,6 +19,7 @@ const iconById = {
   car: Car,
   delivery: Package,
 } as const;
+const JAKARTA_COORDINATES = [-6.2088, 106.8456] as const;
 
 export default function ChooseRideScreen() {
   const params = useLocalSearchParams<{ pickup?: string; destination?: string }>();
@@ -50,22 +51,22 @@ export default function ChooseRideScreen() {
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <LinearGradient
-          colors={[Colors.primary50, Colors.primaryLight]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.routeMap}
-        >
-          <View style={styles.routeRow}>
-            <MapPin size={16} color={Colors.primary} strokeWidth={2} />
-            <Text style={styles.routeText} numberOfLines={1}>{params.pickup ?? 'Lokasi jemput'}</Text>
+        <View style={styles.routeMap}>
+          <Map center={JAKARTA_COORDINATES} style={styles.routeMapCanvas}>
+            <MapTileLayer />
+          </Map>
+          <View pointerEvents="none" style={styles.routeCard}>
+            <View style={styles.routeRow}>
+              <MapPin size={16} color={Colors.primary} strokeWidth={2} />
+              <Text style={styles.routeText} numberOfLines={1}>{params.pickup ?? 'Lokasi jemput'}</Text>
+            </View>
+            <View style={styles.routeDivider} />
+            <View style={styles.routeRow}>
+              <MapPin size={16} color={Colors.primaryDark} strokeWidth={2} />
+              <Text style={styles.routeText} numberOfLines={1}>{params.destination ?? 'Tujuan'}</Text>
+            </View>
           </View>
-          <View style={styles.routeDivider} />
-          <View style={styles.routeRow}>
-            <MapPin size={16} color={Colors.primaryDark} strokeWidth={2} />
-            <Text style={styles.routeText} numberOfLines={1}>{params.destination ?? 'Tujuan'}</Text>
-          </View>
-        </LinearGradient>
+        </View>
 
         <Text style={styles.sectionTitle}>Opsi Ride</Text>
         <View style={styles.optionList}>
@@ -162,9 +163,23 @@ const styles = StyleSheet.create({
     gap: Spacing.base,
   },
   routeMap: {
+    position: 'relative',
     borderRadius: Radius.lg,
-    padding: Spacing.base,
+    minHeight: 176,
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+  },
+  routeMapCanvas: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  routeCard: {
+    margin: Spacing.base,
+    padding: Spacing.md,
     gap: Spacing.sm,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: 'rgba(255,255,255,0.94)',
   },
   routeRow: {
     flexDirection: 'row',

@@ -56,9 +56,9 @@
 - [x] Choose ride screen (map + route + options)
 - [x] Price estimation API call (mock estimation)
 - [ ] Payment method selector (Bottom Sheet)
-- [ ] Searching driver screen (Lottie animation + fallback)
+- [x] Searching driver screen (Reanimated radar + fallback)
 - [x] Driver found - info card
-- [ ] Live tracking screen (map + driver marker, animated)
+- [x] Live tracking screen (map + route + driver marker mock)
 - [ ] WebSocket connection untuk real-time location
 - [x] Ride complete screen (rating + tip)
 - [x] SOS button

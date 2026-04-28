@@ -1,29 +1,34 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { MessageCircle, Phone } from '@/components/ui/TailwindIcon';
-import { LinearGradient } from 'expo-linear-gradient';
+import { MessageCircle, Phone, ShoppingBag } from '@/components/ui/TailwindIcon';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Map, MapTileLayer } from '@/components/ui/map';
 import { Colors } from '@/constants/Colors';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
 
 const steps = ['Disiapkan', 'Dijemput', 'Diantar'];
+const TRACKING_COORDINATES = [-6.1939, 106.823] as const;
 
 export default function FoodTrackingScreen() {
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
-      <LinearGradient
-        colors={[Colors.primary50, Colors.primaryLight]}
-        style={styles.mapArea}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <Text style={styles.mapTitle}>Map Tracking Driver</Text>
-        <Text style={styles.mapSub}>Driver sedang menuju lokasi restoran</Text>
-      </LinearGradient>
+      <View style={styles.mapArea}>
+        <Map center={TRACKING_COORDINATES} style={styles.mapCanvas}>
+          <MapTileLayer />
+        </Map>
+        <View style={styles.mapBadge}>
+          <ShoppingBag size={16} color={Colors.primary} strokeWidth={2.2} />
+          <Text style={styles.mapBadgeText}>Pesanan diproses</Text>
+        </View>
+        <View pointerEvents="none" style={styles.mapContent}>
+          <Text style={styles.mapTitle}>Map Tracking Driver</Text>
+          <Text style={styles.mapSub}>Driver sedang menuju lokasi restoran</Text>
+        </View>
+      </View>
 
       <View style={styles.panel}>
         <Text style={styles.status}>Status: Sedang disiapkan...</Text>
@@ -71,8 +76,42 @@ const styles = StyleSheet.create({
   },
   mapArea: {
     flex: 1,
+    position: 'relative',
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.divider,
+    overflow: 'hidden',
+  },
+  mapCanvas: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 0,
+    borderWidth: 0,
+  },
+  mapBadge: {
+    position: 'absolute',
+    top: 24,
+    right: Spacing.base,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.white,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 10,
+    minHeight: 34,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 6,
+  },
+  mapContent: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.base,
+  },
+  mapBadgeText: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.caption,
+    color: Colors.textPrimary,
   },
   mapTitle: {
     fontFamily: FontFamily.bold,
@@ -84,6 +123,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: FontSize.body,
     color: Colors.textSecondary,
+    textAlign: 'center',
   },
   panel: {
     padding: Spacing.base,

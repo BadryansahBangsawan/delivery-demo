@@ -3,15 +3,17 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ArrowLeft, Clock3, MapPin } from '@/components/ui/TailwindIcon';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Map, MapTileLayer } from '@/components/ui/map';
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { savedPlaces } from '@/constants/MockData';
+
+const JAKARTA_COORDINATES = [-6.2088, 106.8456] as const;
 
 export default function PickLocationScreen() {
   const [pickup, setPickup] = useState('Jl. Sudirman No. 10');
@@ -47,16 +49,16 @@ export default function PickLocationScreen() {
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <LinearGradient
-          colors={[Colors.primaryLight, Colors.primary50]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.mapPlaceholder}
-        >
-          <MapPin size={30} color={Colors.primary} strokeWidth={2.2} />
-          <Text style={styles.mapTitle}>Map Preview</Text>
-          <Text style={styles.mapCaption}>Tentukan titik jemput & tujuanmu</Text>
-        </LinearGradient>
+        <View style={styles.mapPlaceholder}>
+          <Map center={JAKARTA_COORDINATES} style={styles.mapCanvas}>
+            <MapTileLayer />
+          </Map>
+          <View pointerEvents="none" style={styles.mapOverlayContent}>
+            <MapPin size={30} color={Colors.primary} strokeWidth={2.2} />
+            <Text style={styles.mapTitle}>Map Preview</Text>
+            <Text style={styles.mapCaption}>Tentukan titik jemput & tujuanmu</Text>
+          </View>
+        </View>
 
         <View style={styles.formSection}>
           <Input
@@ -151,11 +153,20 @@ const styles = StyleSheet.create({
     gap: Spacing.base,
   },
   mapPlaceholder: {
+    position: 'relative',
     borderRadius: Radius.lg,
     minHeight: 170,
+    overflow: 'hidden',
+  },
+  mapCanvas: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  mapOverlayContent: {
+    ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
+    paddingHorizontal: Spacing.base,
   },
   mapTitle: {
     fontFamily: FontFamily.semiBold,
