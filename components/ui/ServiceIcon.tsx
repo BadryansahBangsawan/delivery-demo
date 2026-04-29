@@ -19,6 +19,13 @@ const SERVICE_ICON_SOURCE = {
   mart: require('../../assets/service-icons/mart.png'),
 } as const;
 
+const SERVICE_ICON_SCALE: Partial<Record<ServiceIconName, number>> = {
+  food: 0.86,
+  send: 1,
+  package: 0.9,
+  mart: 0.9,
+};
+
 interface ServiceIconProps {
   name: ServiceIconName;
   size?: number;
@@ -26,10 +33,12 @@ interface ServiceIconProps {
 }
 
 export function ServiceIcon({ name, size = 24, style }: ServiceIconProps) {
+  const iconSize = Math.round(size * (SERVICE_ICON_SCALE[name] ?? 1));
+
   return (
     <Image
       source={SERVICE_ICON_SOURCE[name]}
-      style={[{ width: size, height: size }, style]}
+      style={[{ width: iconSize, height: iconSize }, style]}
       resizeMode="contain"
     />
   );

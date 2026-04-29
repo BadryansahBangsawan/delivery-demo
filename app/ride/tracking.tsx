@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Clock3, MapPin, MessageCircle, Phone, Send, Star } from '@/components/ui/TailwindIcon';
 
 import { Avatar } from '@/components/ui/Avatar';
@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Map, MapMarker, MapPolyline, MapTileLayer } from '@/components/ui/map';
-import { ServiceIcon } from '@/components/ui/ServiceIcon';
+import { ServiceIcon, type ServiceIconName } from '@/components/ui/ServiceIcon';
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Radius, Spacing } from '@/constants/Spacing';
@@ -24,7 +24,17 @@ const ROUTE_COORDINATES = [
   DESTINATION_COORDINATES,
 ];
 
+function toIconName(rideName?: string): ServiceIconName {
+  const lower = (rideName ?? '').toLowerCase();
+  if (lower === 'car') return 'car';
+  if (lower === 'delivery') return 'delivery';
+  return 'ride';
+}
+
 export default function LiveTrackingScreen() {
+  const params = useLocalSearchParams<{ ride?: string }>();
+  const iconName = toIconName(params.ride);
+
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
       <View style={styles.mapArea}>
@@ -49,12 +59,12 @@ export default function LiveTrackingScreen() {
           </MapMarker>
           <MapMarker coordinate={DRIVER_COORDINATES} title="Ahmad">
             <View style={styles.driverMarker}>
-              <ServiceIcon name="ride" size={30} />
+              <ServiceIcon name={iconName} size={30} />
             </View>
           </MapMarker>
         </Map>
         <View style={styles.mapBadge}>
-          <ServiceIcon name="ride" size={24} />
+          <ServiceIcon name={iconName} size={24} />
           <Text style={styles.mapBadgeText}>Driver mendekat</Text>
         </View>
         <View pointerEvents="none" style={styles.mapEtaCard}>

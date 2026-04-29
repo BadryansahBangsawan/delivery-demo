@@ -18,21 +18,30 @@ import {
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { ServiceIcon } from "@/components/ui/ServiceIcon";
+import { ServiceIcon, type ServiceIconName } from "@/components/ui/ServiceIcon";
 import { Colors } from "@/constants/Colors";
 import { FontFamily, FontSize } from "@/constants/Typography";
 import { Radius, Spacing } from "@/constants/Spacing";
 import { formatIDR } from "@/utils/currency";
 
 const EASE_OUT = Easing.bezier(0.23, 1, 0.32, 1);
+
+function toIconName(rideName?: string): ServiceIconName {
+  const lower = (rideName ?? '').toLowerCase();
+  if (lower === 'car') return 'car';
+  if (lower === 'delivery') return 'delivery';
+  return 'ride';
+}
+
 const SEARCH_STEPS = [
   { label: "Cari driver terdekat", meta: "Sekitar titik jemput" },
-  { label: "Cek kendaraan", meta: "Motor aktif dan responsif" },
+  { label: "Cek kendaraan", meta: "Kendaraan aktif dan responsif" },
   { label: "Driver menerima", meta: "Ahmad menuju lokasi jemput" },
 ];
 
 export default function SearchingDriverScreen() {
   const params = useLocalSearchParams<{ ride?: string; price?: string }>();
+  const iconName = toIconName(params.ride);
   const [phase, setPhase] = useState(0);
   const pulse = useSharedValue(0.95);
   const opacity = useSharedValue(1);
@@ -55,7 +64,7 @@ export default function SearchingDriverScreen() {
       setTimeout(() => setPhase(3), 2450),
     ];
     const navigateTimer = setTimeout(() => {
-      router.replace("/ride/tracking");
+      router.replace({ pathname: '/ride/tracking', params: { ride: params.ride, price: params.price } });
     }, 3400);
 
     return () => {
@@ -80,13 +89,13 @@ export default function SearchingDriverScreen() {
         <View style={styles.radarWrap}>
           <Animated.View style={[styles.radarOuter, pulseStyle]} />
           <View style={styles.radarInner}>
-            <ServiceIcon name="ride" size={66} />
+            <ServiceIcon name={iconName} size={66} />
           </View>
         </View>
 
         <Card style={styles.driverPreview}>
           <View style={styles.driverIcon}>
-            <ServiceIcon name="ride" size={32} />
+            <ServiceIcon name={iconName} size={32} />
           </View>
           <View style={styles.driverInfo}>
             <Text style={styles.driverTitle}>Kandidat driver</Text>

@@ -1,3 +1,5 @@
+import type { ImageSourcePropType } from 'react-native';
+
 export interface RideOption {
   id: string;
   name: string;
@@ -48,6 +50,7 @@ export interface Restaurant {
   rating: number;
   distance: string;
   eta: string;
+  image: ImageSourcePropType;
 }
 
 export interface MenuItem {
@@ -158,9 +161,33 @@ export const chatMessages: Record<string, ChatMessage[]> = {
 export const foodCategories = ['Semua', 'Promo', 'Near', 'Nasi', 'Mie', 'Snack'];
 
 export const restaurants: Restaurant[] = [
-  { id: 'r1', name: 'Warung Nasi Goreng', category: 'Nasi', rating: 4.9, distance: '1.2 km', eta: '20-30 min' },
-  { id: 'r2', name: 'Mie Ayam Pak Joko', category: 'Mie', rating: 4.7, distance: '0.8 km', eta: '15-25 min' },
-  { id: 'r3', name: 'Soto Betawi Bu Sari', category: 'Soto', rating: 4.8, distance: '2.1 km', eta: '25-35 min' },
+  {
+    id: 'r1',
+    name: 'Warung Nasi Goreng',
+    category: 'Nasi',
+    rating: 4.9,
+    distance: '1.2 km',
+    eta: '20-30 min',
+    image: require('../assets/food/nasi-goreng.jpg'),
+  },
+  {
+    id: 'r2',
+    name: 'Mie Ayam Pak Joko',
+    category: 'Mie',
+    rating: 4.7,
+    distance: '0.8 km',
+    eta: '15-25 min',
+    image: require('../assets/food/mie-ayam.jpg'),
+  },
+  {
+    id: 'r3',
+    name: 'Soto Betawi Bu Sari',
+    category: 'Soto',
+    rating: 4.8,
+    distance: '2.1 km',
+    eta: '25-35 min',
+    image: require('../assets/food/soto.jpg'),
+  },
 ];
 
 export const restaurantMenus: Record<string, MenuItem[]> = {

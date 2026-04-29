@@ -17,6 +17,7 @@ import {
   Dimensions,
   FlatList,
   Image,
+  ImageBackground,
   ImageSourcePropType,
   ListRenderItemInfo,
   Pressable,
@@ -50,6 +51,7 @@ import { ServiceIcon, type ServiceIconName } from '@/components/ui/ServiceIcon';
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Spacing, Radius, HIT_SLOP } from '@/constants/Spacing';
+import { useStore } from '@/store';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_WIDTH * 0.62;
@@ -107,7 +109,7 @@ const RESTAURANTS: Restaurant[] = [
     distance: '1.2 km',
     time: '20-30 min',
     category: 'Nasi',
-    image: require('../../assets/images/splash-icon.png'),
+    image: require('../../assets/food/nasi-goreng.jpg'),
   },
   {
     id: '2',
@@ -116,7 +118,7 @@ const RESTAURANTS: Restaurant[] = [
     distance: '0.8 km',
     time: '15-25 min',
     category: 'Mie',
-    image: require('../../assets/images/icon.png'),
+    image: require('../../assets/food/mie-ayam.jpg'),
   },
   {
     id: '3',
@@ -125,7 +127,7 @@ const RESTAURANTS: Restaurant[] = [
     distance: '2.1 km',
     time: '25-35 min',
     category: 'Soto',
-    image: require('../../assets/images/android-icon-foreground.png'),
+    image: require('../../assets/food/soto.jpg'),
   },
 ];
 
@@ -157,7 +159,7 @@ const ServiceItem = React.memo(function ServiceItem({
           {item.serviceIcon ? (
             <ServiceIcon name={item.serviceIcon} size={42} />
           ) : Icon ? (
-            <Icon size={22} color={Colors.white} strokeWidth={2.1} />
+            <Icon size={22} color={Colors.primary} strokeWidth={2.2} />
           ) : null}
         </View>
         <Text style={styles.serviceLabel}>{item.label}</Text>
@@ -174,7 +176,7 @@ const RestaurantCard = React.memo(function RestaurantCard({ item }: { item: Rest
       accessibilityLabel={`${item.name}, rating ${item.rating}, ${item.distance}`}
     >
       <View style={styles.restaurantImgPlaceholder}>
-        <Image source={item.image} style={styles.restaurantImage} resizeMode="contain" />
+        <Image source={item.image} style={styles.restaurantImage} resizeMode="cover" />
       </View>
 
       <View style={styles.restaurantInfo}>
@@ -200,6 +202,9 @@ const RestaurantCard = React.memo(function RestaurantCard({ item }: { item: Rest
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
+  const { userName } = useStore();
+  const firstName = userName.split(' ')[0];
+
   const handleServicePress = useCallback((serviceId: string) => {
     if (serviceId === 'ride' || serviceId === 'car' || serviceId === 'delivery') {
       router.push('/ride');
@@ -232,7 +237,7 @@ export default function HomeScreen() {
         {/* ── Header ── */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Hai, Andi</Text>
+            <Text style={styles.greeting}>Hai, {firstName}</Text>
             <Text style={styles.tagline}>Mau ke mana hari ini?</Text>
           </View>
 
@@ -268,19 +273,11 @@ export default function HomeScreen() {
         </Pressable>
 
         {/* ── DELIVRY brand banner ── */}
-        <LinearGradient
-          colors={[Colors.primary, Colors.primaryDark]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+        <Image
+          source={require('../../assets/banner/all-services.png')}
           style={styles.brandBanner}
-        >
-          <View style={styles.brandBannerLeft}>
-            <Text style={styles.brandBannerBadge}>DISKON 20%</Text>
-            <Text style={styles.brandBannerTitle}>Untuk semua{'\n'}layanan</Text>
-            <Text style={styles.brandBannerSub}>Pakai kode: MOVE20</Text>
-          </View>
-          <Image source={require('../../assets/images/icon.png')} style={styles.bannerImage} resizeMode="contain" />
-        </LinearGradient>
+          resizeMode="cover"
+        />
 
         {/* ── Service Grid ── */}
         <View style={styles.sectionHeader}>
@@ -305,31 +302,39 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.promoContainer}>
-          <LinearGradient
-            colors={['#6C2BD9', '#4C1FA8']}
-            start={{ x: 0.1, y: 0 }}
-            end={{ x: 0.9, y: 1 }}
+          <ImageBackground
+            source={require('../../assets/promo/food-delivery.jpg')}
             style={styles.promoCard}
+            imageStyle={styles.promoCardImage}
+            resizeMode="cover"
           >
-            <View>
+            <LinearGradient
+              colors={['rgba(34,12,84,0.78)', 'rgba(76,31,168,0.5)']}
+              start={{ x: 0.05, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.promoOverlay}
+            >
               <Text style={styles.promoLabel}>Gratis Ongkir</Text>
               <Text style={styles.promoTitle}>Order Food{'\n'}pertamamu</Text>
-            </View>
-            <Image source={require('../../assets/images/splash-icon.png')} style={styles.promoImage} resizeMode="contain" />
-          </LinearGradient>
+            </LinearGradient>
+          </ImageBackground>
 
-          <LinearGradient
-            colors={['#D97706', '#B45309']}
-            start={{ x: 0.1, y: 0 }}
-            end={{ x: 0.9, y: 1 }}
+          <ImageBackground
+            source={require('../../assets/promo/ride-promo.jpg')}
             style={styles.promoCard}
+            imageStyle={styles.promoCardImage}
+            resizeMode="cover"
           >
-            <View>
+            <LinearGradient
+              colors={['rgba(93,48,6,0.76)', 'rgba(180,83,9,0.48)']}
+              start={{ x: 0.05, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.promoOverlay}
+            >
               <Text style={styles.promoLabel}>Hemat 15%</Text>
               <Text style={styles.promoTitle}>Ride ke{'\n'}kantormu</Text>
-            </View>
-            <Image source={require('../../assets/images/android-icon-foreground.png')} style={styles.promoImage} resizeMode="contain" />
-          </LinearGradient>
+            </LinearGradient>
+          </ImageBackground>
         </View>
 
         {/* ── Recent orders ── */}
@@ -346,7 +351,7 @@ export default function HomeScreen() {
                 style={styles.recentCard}
                 accessibilityLabel={`${order.service} ke ${order.destination}`}
               >
-                <View style={[styles.recentIcon, { backgroundColor: Colors.primaryLight }]}>
+                <View style={styles.recentIcon}>
                   <ServiceIcon name={order.serviceIcon} size={28} />
                 </View>
                 <View style={styles.recentInfo}>
@@ -362,7 +367,12 @@ export default function HomeScreen() {
         {/* ── Nearby restaurants ── */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Restoran terdekat</Text>
-          <Pressable hitSlop={HIT_SLOP} accessibilityRole="button" accessibilityLabel="Lihat semua restoran">
+          <Pressable
+            onPress={() => router.push('/food')}
+            hitSlop={HIT_SLOP}
+            accessibilityRole="button"
+            accessibilityLabel="Lihat semua restoran"
+          >
             <Text style={styles.sectionLink}>Lihat semua</Text>
           </Pressable>
         </View>
@@ -462,36 +472,9 @@ const styles = StyleSheet.create({
   brandBanner: {
     marginHorizontal: Spacing.base,
     borderRadius: Radius.lg,
-    padding: Spacing.base,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     marginBottom: Spacing.lg,
-    minHeight: 110,
-  },
-  brandBannerLeft: {
-    gap: 4,
-  },
-  brandBannerBadge: {
-    fontFamily: FontFamily.semiBold,
-    fontSize: FontSize.caption,
-    color: Colors.primaryLight,
-  },
-  brandBannerTitle: {
-    fontFamily: FontFamily.bold,
-    fontSize: FontSize.h3,
-    color: Colors.white,
-    lineHeight: 26,
-  },
-  brandBannerSub: {
-    fontFamily: FontFamily.medium,
-    fontSize: FontSize.caption,
-    color: 'rgba(255,255,255,0.8)',
-    marginTop: 4,
-  },
-  bannerImage: {
-    width: 66,
-    height: 66,
+    width: SCREEN_WIDTH - Spacing.base * 2,
+    height: (SCREEN_WIDTH - Spacing.base * 2) * (509 / 1400),
   },
 
   // Section header
@@ -555,11 +538,16 @@ const styles = StyleSheet.create({
   promoCard: {
     flex: 1,
     borderRadius: Radius.lg,
-    padding: Spacing.base,
     minHeight: 120,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  promoCardImage: {
+    borderRadius: Radius.lg,
+  },
+  promoOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: Spacing.base,
   },
   promoLabel: {
     fontFamily: FontFamily.medium,
@@ -572,10 +560,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
     color: Colors.white,
     lineHeight: 22,
-  },
-  promoImage: {
-    width: 42,
-    height: 42,
   },
 
   // Recent orders
@@ -594,6 +578,9 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -624,13 +611,13 @@ const styles = StyleSheet.create({
   },
   restaurantImgPlaceholder: {
     height: 120,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: Colors.surfaceAlt,
     alignItems: 'center',
     justifyContent: 'center',
   },
   restaurantImage: {
-    width: 80,
-    height: 80,
+    width: '100%',
+    height: '100%',
   },
   restaurantInfo: {
     padding: Spacing.md,

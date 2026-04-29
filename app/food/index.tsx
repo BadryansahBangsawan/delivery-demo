@@ -78,9 +78,9 @@ export default function FoodHomeScreen() {
           >
             <View style={styles.restaurantImage}>
               <Image
-                source={require('../../assets/images/splash-icon.png')}
+                source={item.image}
                 style={styles.restaurantImageAsset}
-                resizeMode="contain"
+                resizeMode="cover"
               />
             </View>
 
@@ -186,13 +186,13 @@ const styles = StyleSheet.create({
   },
   restaurantImage: {
     height: 122,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: Colors.surfaceAlt,
     alignItems: 'center',
     justifyContent: 'center',
   },
   restaurantImageAsset: {
-    width: 80,
-    height: 80,
+    width: '100%',
+    height: '100%',
   },
   restaurantInfo: {
     padding: Spacing.md,

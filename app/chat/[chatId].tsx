@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Send } from '@/components/ui/TailwindIcon';
@@ -21,7 +21,6 @@ export default function ChatRoomScreen() {
     [chatId]
   );
 
-  // Local copy of messages — starts from mock, grows with user sends
   const [messages, setMessages] = useState<ChatMessage[]>(
     () => chatMessages[thread.id] ?? []
   );
@@ -37,7 +36,6 @@ export default function ChatRoomScreen() {
     };
     setMessages((prev) => [...prev, newMsg]);
     setMessage('');
-    // Scroll to end after state update
     setTimeout(() => {
       listRef.current?.scrollToEnd({ animated: true });
     }, 50);
@@ -56,67 +54,73 @@ export default function ChatRoomScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.root} edges={['top']}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <ArrowLeft size={20} color={Colors.textPrimary} strokeWidth={2.2} />
-        </Pressable>
-        <View style={styles.headerInfo}>
-          <Text style={styles.headerTitle}>{thread.name}</Text>
-          <Text style={styles.headerSub}>{thread.role}</Text>
-        </View>
-        <View style={styles.headerGap} />
-      </View>
-
-      <FlatList
-        ref={listRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.messageList}
-        renderItem={renderItem}
-        onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
-        ListFooterComponent={
-          <View style={styles.quickRow}>
-            {quickReplies.map((reply) => (
-              <Pressable
-                key={reply}
-                style={styles.quickChip}
-                onPress={() => sendMessage(reply)}
-              >
-                <Text style={styles.quickChipText}>{reply}</Text>
-              </Pressable>
-            ))}
+    <KeyboardAvoidingView
+      style={styles.root}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <SafeAreaView style={styles.inner} edges={['top']}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+            <ArrowLeft size={20} color={Colors.textPrimary} strokeWidth={2.2} />
+          </Pressable>
+          <View style={styles.headerInfo}>
+            <Text style={styles.headerTitle}>{thread.name}</Text>
+            <Text style={styles.headerSub}>{thread.role}</Text>
           </View>
-        }
-      />
+          <View style={styles.headerGap} />
+        </View>
 
-      <View style={styles.inputBar}>
-        <TextInput
-          style={styles.input}
-          value={message}
-          onChangeText={setMessage}
-          placeholder="Tulis pesan..."
-          placeholderTextColor={Colors.textHint}
-          onSubmitEditing={() => sendMessage(message)}
-          returnKeyType="send"
-          multiline={false}
+        <FlatList
+          ref={listRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.messageList}
+          renderItem={renderItem}
+          onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
         />
-        <Pressable
-          style={[styles.sendBtn, !message.trim() && styles.sendBtnDisabled]}
-          onPress={() => sendMessage(message)}
-          disabled={!message.trim()}
-          accessibilityRole="button"
-          accessibilityLabel="Kirim pesan"
-        >
-          <Send size={18} color={Colors.white} strokeWidth={2.2} />
-        </Pressable>
-      </View>
-    </SafeAreaView>
+
+        {/* Quick reply chips — pinned above input bar, follows keyboard */}
+        <View style={styles.quickRow}>
+          {quickReplies.map((reply) => (
+            <Pressable
+              key={reply}
+              style={styles.quickChip}
+              onPress={() => sendMessage(reply)}
+            >
+              <Text style={styles.quickChipText}>{reply}</Text>
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={styles.inputBar}>
+          <TextInput
+            style={styles.input}
+            value={message}
+            onChangeText={setMessage}
+            placeholder="Tulis pesan..."
+            placeholderTextColor={Colors.textHint}
+            onSubmitEditing={() => sendMessage(message)}
+            returnKeyType="send"
+            multiline={false}
+          />
+          <Pressable
+            style={[styles.sendBtn, !message.trim() && styles.sendBtnDisabled]}
+            onPress={() => sendMessage(message)}
+            disabled={!message.trim()}
+            accessibilityRole="button"
+            accessibilityLabel="Kirim pesan"
+          >
+            <Send size={18} color={Colors.white} strokeWidth={2.2} />
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.white },
+  inner: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -200,7 +204,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: 4,
+    backgroundColor: Colors.white,
   },
   quickChip: {
     borderRadius: Radius.full,

@@ -49,9 +49,9 @@ export default function RestaurantDetailScreen() {
           <>
             <View style={styles.hero}>
               <Image
-                source={require('../../assets/images/icon.png')}
+                source={restaurant.image}
                 style={styles.heroImage}
-                resizeMode="contain"
+                resizeMode="cover"
               />
             </View>
 
@@ -191,13 +191,13 @@ const styles = StyleSheet.create({
   },
   hero: {
     height: 170,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: Colors.surfaceAlt,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heroImage: {
-    width: 108,
-    height: 108,
+    width: '100%',
+    height: '100%',
   },
   restaurantInfo: {
     padding: Spacing.base,
