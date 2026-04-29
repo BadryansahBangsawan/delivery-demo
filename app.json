@@ -4,7 +4,7 @@
     "slug": "Delivry",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/brand/logo-mark.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "delivry",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,15 +15,15 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
-        "foregroundImage": "./assets/brand/logo-mark.png",
-        "monochromeImage": "./assets/brand/logo-mark.png"
+        "foregroundImage": "./assets/images/icon.png",
+        "monochromeImage": "./assets/images/icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/brand/logo-mark.png"
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
       "expo-router",
