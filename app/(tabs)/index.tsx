@@ -35,11 +35,6 @@ import {
   Clock,
   MapPin,
   ChevronRight,
-  Bike,
-  Car,
-  Package,
-  Send,
-  ShoppingBag,
   Plus,
 } from '@/components/ui/TailwindIcon';
 import Animated, {
@@ -51,6 +46,7 @@ import { router } from 'expo-router';
 
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { ServiceIcon, type ServiceIconName } from '@/components/ui/ServiceIcon';
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Spacing, Radius, HIT_SLOP } from '@/constants/Spacing';
@@ -63,7 +59,8 @@ const CARD_WIDTH = SCREEN_WIDTH * 0.62;
 interface Service {
   id: string;
   label: string;
-  icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
+  serviceIcon?: ServiceIconName;
+  icon?: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
 }
 
 interface RecentOrder {
@@ -71,7 +68,7 @@ interface RecentOrder {
   service: string;
   destination: string;
   label: string;
-  icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
+  serviceIcon: ServiceIconName;
 }
 
 interface Restaurant {
@@ -87,19 +84,19 @@ interface Restaurant {
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const SERVICES: Service[] = [
-  { id: 'ride',     label: 'Ride',     icon: Bike },
-  { id: 'car',      label: 'Car',      icon: Car },
-  { id: 'delivery', label: 'Delivery', icon: Package },
-  { id: 'food',     label: 'Food',     icon: ShoppingBag },
-  { id: 'send',     label: 'Send',     icon: Send },
-  { id: 'package',  label: 'Package',  icon: Package },
-  { id: 'mart',     label: 'Mart',     icon: ShoppingBag },
+  { id: 'ride',     label: 'Ride',     serviceIcon: 'ride' },
+  { id: 'car',      label: 'Car',      serviceIcon: 'car' },
+  { id: 'delivery', label: 'Delivery', serviceIcon: 'delivery' },
+  { id: 'food',     label: 'Food',     serviceIcon: 'food' },
+  { id: 'send',     label: 'Send',     serviceIcon: 'send' },
+  { id: 'package',  label: 'Package',  serviceIcon: 'package' },
+  { id: 'mart',     label: 'Mart',     serviceIcon: 'mart' },
   { id: 'more',     label: 'Lainnya',  icon: Plus },
 ];
 
 const RECENT_ORDERS: RecentOrder[] = [
-  { id: '1', service: 'Ride', destination: 'Kantor', label: 'Jl. Sudirman No.10', icon: Bike },
-  { id: '2', service: 'Food', destination: 'Rumah',  label: 'Jl. Merdeka 5',      icon: ShoppingBag },
+  { id: '1', service: 'Ride', destination: 'Kantor', label: 'Jl. Sudirman No.10', serviceIcon: 'ride' },
+  { id: '2', service: 'Food', destination: 'Rumah',  label: 'Jl. Merdeka 5',      serviceIcon: 'food' },
 ];
 
 const RESTAURANTS: Restaurant[] = [
@@ -157,7 +154,11 @@ const ServiceItem = React.memo(function ServiceItem({
         hitSlop={HIT_SLOP}
       >
         <View style={styles.serviceIcon}>
-          <Icon size={22} color={Colors.white} strokeWidth={2.1} />
+          {item.serviceIcon ? (
+            <ServiceIcon name={item.serviceIcon} size={42} />
+          ) : Icon ? (
+            <Icon size={22} color={Colors.white} strokeWidth={2.1} />
+          ) : null}
         </View>
         <Text style={styles.serviceLabel}>{item.label}</Text>
       </Pressable>
@@ -338,7 +339,6 @@ export default function HomeScreen() {
 
         <View style={styles.recentList}>
           {RECENT_ORDERS.map((order) => {
-            const Icon = order.icon;
             return (
               <Card
                 key={order.id}
@@ -347,7 +347,7 @@ export default function HomeScreen() {
                 accessibilityLabel={`${order.service} ke ${order.destination}`}
               >
                 <View style={[styles.recentIcon, { backgroundColor: Colors.primaryLight }]}>
-                  <Icon size={18} color={Colors.primary} strokeWidth={2.2} />
+                  <ServiceIcon name={order.serviceIcon} size={28} />
                 </View>
                 <View style={styles.recentInfo}>
                   <Text style={styles.recentService}>{order.service}</Text>
@@ -531,9 +531,12 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryAlpha80,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   serviceLabel: {
     fontFamily: FontFamily.medium,

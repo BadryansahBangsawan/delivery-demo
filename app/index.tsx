@@ -4,7 +4,7 @@
  * Uses only transform + opacity per performance guidelines.
  */
 import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -74,12 +74,7 @@ export default function SplashScreen() {
   return (
     <Animated.View style={[styles.container, containerStyle]}>
       <Animated.View style={[styles.logoWrap, logoStyle]}>
-        {/* D icon — purple circle with D */}
-        <View style={styles.iconBg}>
-          <Text style={styles.iconText}>D</Text>
-        </View>
-
-        <Text style={styles.logoText}>DELIVRY</Text>
+        <Image source={require('../assets/brand/logo-mark.png')} style={styles.logoMark} resizeMode="contain" />
       </Animated.View>
 
       <Animated.Text style={[styles.tagline, taglineStyle]}>
@@ -98,31 +93,13 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   logoWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  iconBg: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 14,
   },
-  iconText: {
-    fontFamily: FontFamily.extraBold,
-    fontSize: 26,
-    color: Colors.white,
-    includeFontPadding: false,
-    lineHeight: 30,
-  },
-  logoText: {
-    fontFamily: FontFamily.extraBold,
-    fontSize: 34,
-    color: Colors.primary,
-    letterSpacing: 1,
-    includeFontPadding: false,
+  logoMark: {
+    width: 124,
+    height: 124,
   },
   tagline: {
     fontFamily: FontFamily.regular,

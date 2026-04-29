@@ -1,9 +1,10 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import { Home, ShoppingBag, Wallet, MessageCircle, User } from '@/components/ui/TailwindIcon';
+import { Home, Wallet, MessageCircle, User } from '@/components/ui/TailwindIcon';
 import * as Haptics from 'expo-haptics';
 
+import { ServiceIcon } from '@/components/ui/ServiceIcon';
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 
@@ -64,7 +65,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon
-              icon={<ShoppingBag size={22} color={focused ? Colors.primary : Colors.textHint} strokeWidth={focused ? 2.5 : 2} />}
+              icon={<ServiceIcon name="package" size={22} style={{ opacity: focused ? 1 : 0.45 }} />}
               label="Pesanan"
               focused={focused}
             />

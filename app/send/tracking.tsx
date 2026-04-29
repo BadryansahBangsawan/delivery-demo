@@ -1,11 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { MessageCircle, Package, Phone } from '@/components/ui/TailwindIcon';
+import { MessageCircle, Phone } from '@/components/ui/TailwindIcon';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Map, MapTileLayer } from '@/components/ui/map';
+import { ServiceIcon } from '@/components/ui/ServiceIcon';
 import { Colors } from '@/constants/Colors';
 import { Radius, Spacing } from '@/constants/Spacing';
 import { FontFamily, FontSize } from '@/constants/Typography';
@@ -20,7 +21,7 @@ export default function SendTrackingScreen() {
           <MapTileLayer />
         </Map>
         <View style={styles.mapBadge}>
-          <Package size={16} color={Colors.primary} strokeWidth={2.2} />
+          <ServiceIcon name="package" size={24} />
           <Text style={styles.mapBadgeText}>Paket dalam rute</Text>
         </View>
         <View pointerEvents="none" style={styles.mapContent}>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, {
   Easing,
@@ -10,7 +10,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { router, useLocalSearchParams } from "expo-router";
 import {
-  Bike,
   CheckCircle,
   Clock3,
   MapPin,
@@ -19,6 +18,7 @@ import {
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ServiceIcon } from "@/components/ui/ServiceIcon";
 import { Colors } from "@/constants/Colors";
 import { FontFamily, FontSize } from "@/constants/Typography";
 import { Radius, Spacing } from "@/constants/Spacing";
@@ -80,13 +80,13 @@ export default function SearchingDriverScreen() {
         <View style={styles.radarWrap}>
           <Animated.View style={[styles.radarOuter, pulseStyle]} />
           <View style={styles.radarInner}>
-            <Bike size={34} color={Colors.white} strokeWidth={2.4} />
+            <ServiceIcon name="ride" size={66} />
           </View>
         </View>
 
         <Card style={styles.driverPreview}>
           <View style={styles.driverIcon}>
-            <Bike size={20} color={Colors.primary} strokeWidth={2.2} />
+            <ServiceIcon name="ride" size={32} />
           </View>
           <View style={styles.driverInfo}>
             <Text style={styles.driverTitle}>Kandidat driver</Text>
@@ -212,7 +212,9 @@ const styles = StyleSheet.create({
     width: 92,
     height: 92,
     borderRadius: 46,
-    backgroundColor: Colors.primary,
+    borderWidth: 1,
+    borderColor: Colors.primaryLight,
+    backgroundColor: Colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -230,7 +232,9 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryLight,
+    borderWidth: 1,
+    borderColor: Colors.primaryLight,
+    backgroundColor: Colors.white,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -1,13 +1,14 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Bike, Clock3, MapPin, MessageCircle, Phone, Send, Star } from '@/components/ui/TailwindIcon';
+import { Clock3, MapPin, MessageCircle, Phone, Send, Star } from '@/components/ui/TailwindIcon';
 
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Map, MapMarker, MapPolyline, MapTileLayer } from '@/components/ui/map';
+import { ServiceIcon } from '@/components/ui/ServiceIcon';
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Radius, Spacing } from '@/constants/Spacing';
@@ -48,12 +49,12 @@ export default function LiveTrackingScreen() {
           </MapMarker>
           <MapMarker coordinate={DRIVER_COORDINATES} title="Ahmad">
             <View style={styles.driverMarker}>
-              <Bike size={18} color={Colors.white} strokeWidth={2.4} />
+              <ServiceIcon name="ride" size={30} />
             </View>
           </MapMarker>
         </Map>
         <View style={styles.mapBadge}>
-          <Bike size={16} color={Colors.primary} strokeWidth={2.2} />
+          <ServiceIcon name="ride" size={24} />
           <Text style={styles.mapBadgeText}>Driver mendekat</Text>
         </View>
         <View pointerEvents="none" style={styles.mapEtaCard}>
@@ -237,11 +238,11 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: Colors.info,
+    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
-    borderColor: Colors.white,
+    borderColor: Colors.info,
   },
   tripSummary: {
     borderRadius: Radius.lg,

@@ -2,12 +2,13 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Bike, Car, ChevronRight, MapPin, Package, Wallet } from '@/components/ui/TailwindIcon';
+import { ArrowLeft, ChevronRight, MapPin, Wallet } from '@/components/ui/TailwindIcon';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Map, MapTileLayer } from '@/components/ui/map';
+import { ServiceIcon, type ServiceIconName } from '@/components/ui/ServiceIcon';
 import { Colors } from '@/constants/Colors';
 import { rideOptions } from '@/constants/MockData';
 import { Radius, Spacing } from '@/constants/Spacing';
@@ -15,11 +16,11 @@ import { FontFamily, FontSize } from '@/constants/Typography';
 import { formatIDR } from '@/utils/currency';
 import { useStore } from '@/store';
 
-const iconById = {
-  ride: Bike,
-  car: Car,
-  delivery: Package,
-} as const;
+const serviceIconById: Record<string, ServiceIconName> = {
+  ride: 'ride',
+  car: 'car',
+  delivery: 'delivery',
+};
 const JAKARTA_COORDINATES = [-6.2088, 106.8456] as const;
 
 export default function ChooseRideScreen() {
@@ -74,7 +75,7 @@ export default function ChooseRideScreen() {
         <View style={styles.optionList}>
           {rideOptions.map((option) => {
             const isActive = option.id === selectedRide;
-            const Icon = iconById[option.id as keyof typeof iconById] ?? Bike;
+            const iconName = serviceIconById[option.id] ?? 'ride';
 
             return (
               <Card
@@ -84,7 +85,7 @@ export default function ChooseRideScreen() {
                 accessibilityLabel={`${option.name}, ${option.eta}, ${formatIDR(option.price)}`}
               >
                 <View style={[styles.optionIconWrap, isActive && styles.optionIconWrapActive]}>
-                  <Icon size={20} color={isActive ? Colors.white : Colors.primary} strokeWidth={2} />
+                  <ServiceIcon name={iconName} size={34} />
                 </View>
 
                 <View style={styles.optionInfo}>
@@ -225,12 +226,15 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryLight,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
   optionIconWrapActive: {
-    backgroundColor: Colors.primary,
+    borderColor: Colors.primaryLight,
+    backgroundColor: Colors.white,
   },
   optionInfo: {
     flex: 1,

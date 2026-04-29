@@ -5,6 +5,7 @@
  */
 import { useRef, useState } from 'react';
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -61,10 +62,7 @@ export default function LoginScreen() {
         <View style={styles.header}>
           {/* Logo */}
           <View style={styles.logoRow}>
-            <View style={styles.iconBg}>
-              <Text style={styles.iconText}>D</Text>
-            </View>
-            <Text style={styles.logoText}>DELIVRY</Text>
+            <Image source={require('../../assets/brand/logo-full.png')} style={styles.logoImage} resizeMode="contain" />
           </View>
 
           <Text style={styles.headline}>Masuk ke akun{'\n'}kamu</Text>
@@ -169,32 +167,13 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   logoRow: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    alignSelf: 'flex-start',
     marginBottom: Spacing.sm,
   },
-  iconBg: {
-    width: 34,
-    height: 34,
-    borderRadius: 9,
-    backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconText: {
-    fontFamily: FontFamily.extraBold,
-    fontSize: 20,
-    color: Colors.white,
-    includeFontPadding: false,
-    lineHeight: 24,
-  },
-  logoText: {
-    fontFamily: FontFamily.extraBold,
-    fontSize: 22,
-    color: Colors.primary,
-    letterSpacing: 0.8,
-    includeFontPadding: false,
+  logoImage: {
+    width: 172,
+    height: 40,
   },
   headline: {
     fontFamily: FontFamily.bold,
