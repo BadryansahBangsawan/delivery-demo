@@ -64,7 +64,7 @@ export default function AkunScreen() {
 
         <View style={styles.divider} />
 
-        <Pressable style={styles.logoutBtn} accessibilityRole="button" accessibilityLabel="Keluar">
+        <Pressable style={styles.logoutBtn} accessibilityRole="button" accessibilityLabel="Keluar" onPress={() => router.replace('/(auth)/login')}>
           <LogOut size={20} color={Colors.error} strokeWidth={2} />
           <Text style={styles.logoutText}>Keluar</Text>
         </Pressable>

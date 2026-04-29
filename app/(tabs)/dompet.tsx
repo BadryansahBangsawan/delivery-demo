@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -37,8 +37,8 @@ export default function DompetScreen() {
           <Text style={styles.balanceAmount}>{formatIDR(walletBalance)}</Text>
           <View style={styles.balanceActions}>
             <Button label="Top Up" variant="secondary" size="sm" fullWidth={false} onPress={() => router.push('/wallet/topup')} />
-            <Button label="Transfer" variant="secondary" size="sm" fullWidth={false} />
-            <Button label="QR Pay" variant="secondary" size="sm" fullWidth={false} />
+            <Button label="Transfer" variant="secondary" size="sm" fullWidth={false} onPress={() => Alert.alert('Segera Hadir', 'Fitur transfer akan segera tersedia.')} />
+            <Button label="QR Pay" variant="secondary" size="sm" fullWidth={false} onPress={() => Alert.alert('Segera Hadir', 'Fitur QR Pay akan segera tersedia.')} />
           </View>
         </LinearGradient>
 

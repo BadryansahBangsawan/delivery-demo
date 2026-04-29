@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ArrowLeft } from '@/components/ui/TailwindIcon';
@@ -30,7 +30,7 @@ export default function EditProfileScreen() {
           <View style={styles.photoCircle}>
             <Text style={styles.photoText}>AR</Text>
           </View>
-          <Pressable>
+          <Pressable onPress={() => Alert.alert('Ubah Foto', 'Fitur ubah foto profil akan segera hadir.')}>
             <Text style={styles.photoAction}>Ubah foto</Text>
           </Pressable>
         </View>

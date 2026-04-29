@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ArrowLeft, ChevronRight } from '@/components/ui/TailwindIcon';
@@ -28,7 +28,7 @@ export default function HelpFaqScreen() {
 
       <View style={styles.content}>
         {faqs.map((faq) => (
-          <Card key={faq} style={styles.item} onPress={() => {}}>
+          <Card key={faq} style={styles.item} onPress={() => Alert.alert('FAQ', faq + '\n\nSilakan hubungi CS DELIVRY di 021-555-1234 untuk bantuan lebih lanjut.')}>
             <Text style={styles.question}>{faq}</Text>
             <ChevronRight size={16} color={Colors.textHint} strokeWidth={2} />
           </Card>

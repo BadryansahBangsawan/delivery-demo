@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ArrowLeft, MapPin, Plus } from '@/components/ui/TailwindIcon';
@@ -27,7 +27,7 @@ export default function SavedAddressesScreen() {
 
       <View style={styles.content}>
         {addresses.map((item) => (
-          <Card key={item.id} style={styles.addressCard} onPress={() => {}}>
+          <Card key={item.id} style={styles.addressCard} onPress={() => Alert.alert(item.title, item.detail)}>
             <View style={styles.iconWrap}>
               <MapPin size={18} color={Colors.primary} strokeWidth={2} />
             </View>
@@ -40,7 +40,7 @@ export default function SavedAddressesScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Pressable style={styles.addBtn}>
+        <Pressable style={styles.addBtn} onPress={() => Alert.alert('Tambah Alamat', 'Fitur tambah alamat akan segera hadir.')}>
           <Plus size={18} color={Colors.white} strokeWidth={2.5} />
           <Text style={styles.addText}>Tambah alamat baru</Text>
         </Pressable>
