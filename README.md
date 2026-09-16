@@ -52,3 +52,7 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Status
+
+This repository is a **public demo** for learning Expo routing and a delivery-style UI. It is not a live courier product and should not take real orders.
