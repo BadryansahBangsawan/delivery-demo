@@ -43,7 +43,9 @@ Screen and route files under `app/` are TypeScript (`.tsx`) and follow Expo Rout
 
 ## Get a fresh project
 
-When you're ready, run:
+Skip this section if you only want to browse the delivery UI demo — `npx expo start` above is enough.
+
+When you're ready to strip the demo screens and start from a blank Expo Router tree, run:
 
 ```bash
 npm run reset-project
