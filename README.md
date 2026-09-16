@@ -18,6 +18,8 @@ You need [Node.js LTS](https://nodejs.org/) on your PATH before the steps below 
    npm install
    ```
 
+   The repo also ships a `bun.lock` for Bun users; either lockfile works for this demo, but stick to one package manager in a given clone so `node_modules` stays consistent.
+
 2. Start the app
 
    ```bash
