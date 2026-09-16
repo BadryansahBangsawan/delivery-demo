@@ -2,7 +2,9 @@
 
 Public Expo demo of a delivery-style mobile app (not a production store).
 
-# Welcome to your Expo app 👋
+Use this repo to explore the UI flow only. Orders, payments, and courier tracking are mocked — nothing here talks to a live backend.
+
+## Welcome
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
