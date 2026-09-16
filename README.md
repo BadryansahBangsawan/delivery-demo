@@ -10,6 +10,8 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Get started
 
+You need [Node.js LTS](https://nodejs.org/) on your PATH before the steps below (`node -v` should print a version).
+
 1. Install dependencies
 
    ```bash
