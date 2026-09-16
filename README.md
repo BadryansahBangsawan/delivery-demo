@@ -33,6 +33,8 @@ In the Expo CLI output, choose one of these targets to open the app:
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+With `npx expo start` still running, most edits under `app/` hot-reload in the open simulator or Expo Go session — restart the Metro bundler only if a native module or app config change requires it.
+
 ## Get a fresh project
 
 When you're ready, run:
