@@ -35,6 +35,8 @@ You can start developing by editing the files inside the **app** directory. This
 
 With `npx expo start` still running, most edits under `app/` hot-reload in the open simulator or Expo Go session — restart the Metro bundler only if a native module or app config change requires it.
 
+Screen and route files under `app/` are TypeScript (`.tsx`) and follow Expo Router conventions — keep new screens in that tree so deep links and tab navigation stay consistent.
+
 ## Get a fresh project
 
 When you're ready, run:
