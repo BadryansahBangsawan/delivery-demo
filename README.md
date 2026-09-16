@@ -37,6 +37,8 @@ You can start developing by editing the files inside the **app** directory. This
 
 Shared UI pieces, hooks, and client state live under `components/`, `hooks/`, and `store/` — change those when a tweak should apply across multiple screens instead of editing each route file.
 
+TypeScript types for routes and shared modules resolve from the project `tsconfig.json`; after renaming a screen file under `app/`, restart the TypeScript server in your editor if path imports still show stale errors.
+
 With `npx expo start` still running, most edits under `app/` hot-reload in the open simulator or Expo Go session — restart the Metro bundler only if a native module or app config change requires it.
 
 On a physical phone, open Expo Go and scan the QR code printed in the terminal after `npx expo start` (same LAN, or tunnel mode if the device is off the LAN).
