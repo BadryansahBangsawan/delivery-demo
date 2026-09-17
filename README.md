@@ -75,6 +75,8 @@ Join our community of developers creating universal apps.
 
 Static images and icons used by the screens live under `assets/` — swap those files when branding the demo UI without changing route code.
 
+Before inventing custom start commands, check the `scripts` block in `package.json` — this demo already wires `start`, `android`, `ios`, and `web` for Expo.
+
 ## Status
 
 This repository is a **public demo** for learning Expo routing and a delivery-style UI. It is not a live courier product and should not take real orders.
