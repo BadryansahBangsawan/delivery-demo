@@ -41,6 +41,8 @@ TypeScript types for routes and shared modules resolve from the project `tsconfi
 
 With `npx expo start` still running, most edits under `app/` hot-reload in the open simulator or Expo Go session — restart the Metro bundler only if a native module or app config change requires it.
 
+If hot reload stalls after a dependency or config change, stop Metro and clear its cache with `npx expo start -c` before opening the app again.
+
 On a physical phone, open Expo Go and scan the QR code printed in the terminal after `npx expo start` (same LAN, or tunnel mode if the device is off the LAN).
 
 Screen and route files under `app/` are TypeScript (`.tsx`) and follow Expo Router conventions — keep new screens in that tree so deep links and tab navigation stay consistent.
