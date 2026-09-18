@@ -4,6 +4,8 @@ Public Expo demo of a delivery-style mobile app (not a production store).
 
 Use this repo to explore the UI flow only. Orders, payments, and courier tracking are mocked — nothing here talks to a live backend.
 
+Demo cart, order, and courier state is seeded in client-side modules under `store/` — edit those fixtures when you want different mock scenarios without wiring an API.
+
 ## Welcome
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
