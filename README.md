@@ -35,6 +35,8 @@ In the Expo CLI output, choose one of these targets to open the app:
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
+For a quick browser preview without a simulator, press `w` in the Expo CLI or start with `npx expo start --web` — useful when you only need to check layout on desktop.
+
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
 Shared UI pieces, hooks, and client state live under `components/`, `hooks/`, and `store/` — change those when a tweak should apply across multiple screens instead of editing each route file.
