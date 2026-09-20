@@ -6,6 +6,8 @@ Use this repo to explore the UI flow only. Orders, payments, and courier trackin
 
 Demo cart, order, and courier state is seeded in client-side modules under `store/` — edit those fixtures when you want different mock scenarios without wiring an API.
 
+Reloading the app (or Expo Go) resets that mock cart and order state; it is not persisted between sessions.
+
 ## Welcome
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
